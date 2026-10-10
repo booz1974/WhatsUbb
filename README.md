@@ -4,7 +4,7 @@ Android-app (Kotlin + Jetpack Compose) voor afdeling UBB2.
 
 - **Bewoners** stellen anoniem vragen over de afspraken en regels van de afdeling.
 - **Begeleiders** (met PIN) maken met AI werkplannen, dagrapportages, gespreksverslagen,
-  incidentmeldingen en signaleringsplannen (te downloaden als PDF), en kunnen vragen stellen over afspraken en doelgroep.
+  signaleringsplannen (te downloaden als PDF), en kunnen vragen stellen over afspraken en doelgroep.
   Bij een gespreksverslag kan het gesprek worden opgenomen (AAC) en door Gemini worden uitgeschreven.
 - **Beheerder** (aparte beheerders-PIN, via Begeleider → Beheer) beheert de kennisbank, de AI-sleutel en de codes,
   en kan documenten met regels, afspraken en werkwijze uploaden (PDF, Word .docx, tekst).

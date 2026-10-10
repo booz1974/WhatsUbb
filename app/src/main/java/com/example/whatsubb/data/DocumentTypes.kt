@@ -75,23 +75,6 @@ val documentTypes = listOf(
         transcriptFieldIndex = 2
     ),
     DocumentType(
-        id = "incident",
-        emoji = "⚠️",
-        title = "Incidentmelding",
-        description = "Feitelijke beschrijving voor een MIC/VIM-melding",
-        instructions = """
-            Maak een feitelijke incidentbeschrijving: situatie vooraf, aanleiding, verloop,
-            interventies van de begeleiding, afloop, nazorg en lering/verbeterpunten.
-            Strikt objectief, in chronologische volgorde.
-        """.trimIndent(),
-        fields = listOf(
-            DocField("Wat is er gebeurd?", "Zo feitelijk mogelijk"),
-            DocField("Aanleiding / situatie vooraf", "Wat ging eraan vooraf?"),
-            DocField("Interventies", "Wat heeft de begeleiding gedaan?"),
-            DocField("Afloop en nazorg", "Hoe is het afgelopen?")
-        )
-    ),
-    DocumentType(
         id = "signaleringsplan",
         emoji = "🚦",
         title = "Signaleringsplan",

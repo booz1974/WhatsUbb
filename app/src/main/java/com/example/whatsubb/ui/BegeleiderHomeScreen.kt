@@ -75,9 +75,9 @@ fun BegeleiderHomeScreen(
                     onClick = onOpenChat
                 )
             }
-            // Weekinfo staat op de plek van Incidentmelding; die schuift één plek op.
-            val incidentIndex = documentTypes.indexOfFirst { it.id == "incident" }.coerceAtLeast(0)
-            items(documentTypes.take(incidentIndex)) { type ->
+            // Weekinfo staat direct na Gespreksverslag.
+            val weekInfoIndex = documentTypes.indexOfFirst { it.id == "verslag" } + 1
+            items(documentTypes.take(weekInfoIndex)) { type ->
                 Tile(type.emoji, type.title, type.description, onClick = { onOpenDocument(type) })
             }
             item {
@@ -88,7 +88,7 @@ fun BegeleiderHomeScreen(
                     onClick = onOpenWeekInfo
                 )
             }
-            items(documentTypes.drop(incidentIndex)) { type ->
+            items(documentTypes.drop(weekInfoIndex)) { type ->
                 Tile(type.emoji, type.title, type.description, onClick = { onOpenDocument(type) })
             }
             item(span = { GridItemSpan(maxLineSpan) }) {
