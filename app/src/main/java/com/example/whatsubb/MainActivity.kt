@@ -1,0 +1,96 @@
+package com.example.whatsubb
+
+import android.content.Context
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import com.example.whatsubb.ai.AiClient
+import com.example.whatsubb.ai.GeminiClient
+import com.example.whatsubb.data.AppSettings
+import com.example.whatsubb.data.DocumentType
+import com.example.whatsubb.data.KnowledgeBase
+import com.example.whatsubb.data.Role
+import com.example.whatsubb.ui.*
+import com.example.whatsubb.ui.theme.*
+
+/** Simpele "container" met alles wat de schermen nodig hebben. */
+class AppServices(context: Context) {
+    val settings = AppSettings(context)
+    val knowledgeBase = KnowledgeBase(context)
+
+    /** Nieuwe client per aanvraag, zodat gewijzigde instellingen direct gelden. */
+    fun aiClient(): AiClient = GeminiClient(apiKey = settings.apiKey, model = settings.model)
+}
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        val services = AppServices(applicationContext)
+        setContent {
+            WhatsUbbTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = SoftBackground
+                ) {
+                    MainScreen(services)
+                }
+            }
+        }
+    }
+}
+
+private sealed interface Screen {
+    data object Login : Screen
+    data object BewonerChat : Screen
+    data object BegeleiderHome : Screen
+    data object BegeleiderChat : Screen
+    data class Document(val type: DocumentType) : Screen
+    data object Settings : Screen
+}
+
+@Composable
+fun MainScreen(services: AppServices) {
+    var screen by remember { mutableStateOf<Screen>(Screen.Login) }
+
+    // Terug-knop: binnen het begeleidersdeel terug naar het menu, anders uitloggen.
+    BackHandler(enabled = screen != Screen.Login) {
+        screen = when (screen) {
+            is Screen.Document, Screen.Settings, Screen.BegeleiderChat -> Screen.BegeleiderHome
+            else -> Screen.Login
+        }
+    }
+
+    when (val current = screen) {
+        Screen.Login -> LoginScreen(services.settings) { role ->
+            screen = if (role == Role.BEWONER) Screen.BewonerChat else Screen.BegeleiderHome
+        }
+        Screen.BewonerChat -> ChatScreen(
+            services = services,
+            role = Role.BEWONER,
+            actionLabel = "Uitloggen",
+            onAction = { screen = Screen.Login }
+        )
+        Screen.BegeleiderHome -> BegeleiderHomeScreen(
+            apiKeyMissing = services.settings.apiKey.isBlank(),
+            onOpenChat = { screen = Screen.BegeleiderChat },
+            onOpenDocument = { screen = Screen.Document(it) },
+            onOpenSettings = { screen = Screen.Settings },
+            onLogout = { screen = Screen.Login }
+        )
+        Screen.BegeleiderChat -> ChatScreen(
+            services = services,
+            role = Role.BEGELEIDER,
+            actionLabel = "Terug",
+            onAction = { screen = Screen.BegeleiderHome }
+        )
+        is Screen.Document -> DocumentScreen(services, current.type) { screen = Screen.BegeleiderHome }
+        Screen.Settings -> SettingsScreen(services) { screen = Screen.BegeleiderHome }
+    }
+}
