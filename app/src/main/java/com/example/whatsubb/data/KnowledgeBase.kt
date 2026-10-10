@@ -10,7 +10,7 @@ enum class Role { BEWONER, BEGELEIDER }
  * Standaard komt die uit assets/ubb2_kennis.md; een begeleider kan de tekst
  * in de app aanpassen, dan wordt een lokale kopie gebruikt.
  */
-class KnowledgeBase(private val context: Context) {
+class KnowledgeBase(private val context: Context, val documents: KnowledgeDocuments) {
 
     private val overrideFile = File(context.filesDir, "ubb2_kennis.md")
 
@@ -35,14 +35,14 @@ class KnowledgeBase(private val context: Context) {
             - Tekst tussen blokhaken zoals [naam], [datum] of [telefoon] is bewust geanonimiseerd. Laat dat zo.
 
             KENNIS VAN DE AFDELING:
-            Hieronder staan de afspraken, regels en informatie over de doelgroep van UBB2.
+            Hieronder staan de afspraken, regels en informatie over de doelgroep van UBB2,
+            gevolgd door documenten die het team heeft toegevoegd (regels, afspraken, werkwijze).
             Baseer je antwoorden over de afdeling ALLEEN op deze tekst. Staat iets er niet in,
             zeg dan eerlijk dat je het niet zeker weet en verwijs naar de begeleiding. Verzin geen regels.
-
-            ===== BEGIN KENNIS UBB2 =====
-            ${load()}
-            ===== EINDE KENNIS UBB2 =====
-        """.trimIndent()
+            Spreken bronnen elkaar tegen, noem dat dan en verwijs naar de begeleiding.
+        """.trimIndent() + "\n\n===== BEGIN KENNIS UBB2 =====\n" + load() +
+            documents.combinedText().let { if (it.isBlank()) "" else "\n\n# Toegevoegde documenten\n\n$it" } +
+            "\n===== EINDE KENNIS UBB2 ====="
 
         val roleSpecific = when (role) {
             Role.BEWONER -> """

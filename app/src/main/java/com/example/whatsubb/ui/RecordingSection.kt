@@ -176,7 +176,7 @@ fun RecordingSection(services: AppServices, onTranscript: (String) -> Unit) {
                                 error = null
                                 scope.launch {
                                     try {
-                                        val text = services.aiClient().transcribe(audio, AudioRecorder.MIME_TYPE, TRANSCRIBE_INSTRUCTION)
+                                        val text = services.aiClient().processFile(audio, AudioRecorder.MIME_TYPE, TRANSCRIBE_INSTRUCTION)
                                         onTranscript(text)
                                         toast("Transcriptie toegevoegd aan de aantekeningen")
                                     } catch (e: AiException) {

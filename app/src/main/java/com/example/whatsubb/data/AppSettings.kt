@@ -30,6 +30,16 @@ class AppSettings(context: Context) {
     fun checkBegeleiderPin(pin: String): Boolean =
         prefs.getString(KEY_PIN_HASH, null) == hash(pin)
 
+    /** Aparte PIN voor beheer (kennisbank, documenten, sleutel, codes). */
+    val hasAdminPin: Boolean
+        get() = prefs.contains(KEY_ADMIN_HASH)
+
+    fun setAdminPin(pin: String) =
+        prefs.edit().putString(KEY_ADMIN_HASH, hash("admin:$pin")).apply()
+
+    fun checkAdminPin(pin: String): Boolean =
+        prefs.getString(KEY_ADMIN_HASH, null) == hash("admin:$pin")
+
     /** Leeg = bewoners hebben geen code nodig. */
     val hasBewonerCode: Boolean
         get() = prefs.contains(KEY_BEWONER_HASH)
@@ -53,5 +63,6 @@ class AppSettings(context: Context) {
         private const val KEY_MODEL = "model"
         private const val KEY_PIN_HASH = "begeleider_pin_hash"
         private const val KEY_BEWONER_HASH = "bewoner_code_hash"
+        private const val KEY_ADMIN_HASH = "admin_pin_hash"
     }
 }

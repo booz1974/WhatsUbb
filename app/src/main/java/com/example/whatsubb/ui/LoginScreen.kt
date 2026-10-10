@@ -179,7 +179,12 @@ fun CodeDialog(
 }
 
 @Composable
-fun NewPinDialog(onDismiss: () -> Unit, onPinSet: (String) -> Unit, title: String = "Stel een begeleider-PIN in") {
+fun NewPinDialog(
+    onDismiss: () -> Unit,
+    onPinSet: (String) -> Unit,
+    title: String = "Stel een begeleider-PIN in",
+    message: String = "Deze PIN beschermt het begeleidersdeel. Deel hem alleen met collega's. Minimaal 4 cijfers."
+) {
     var pin by remember { mutableStateOf("") }
     var repeat by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
@@ -189,10 +194,7 @@ fun NewPinDialog(onDismiss: () -> Unit, onPinSet: (String) -> Unit, title: Strin
         title = { Text(title) },
         text = {
             Column {
-                Text(
-                    "Deze PIN beschermt het begeleidersdeel. Deel hem alleen met collega's. Minimaal 4 cijfers.",
-                    fontSize = 14.sp
-                )
+                Text(message, fontSize = 14.sp)
                 Spacer(Modifier.height(12.dp))
                 OutlinedTextField(
                     value = pin,

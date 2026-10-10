@@ -27,6 +27,7 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
     var bewonerCode by remember { mutableStateOf("") }
     var knowledge by remember { mutableStateOf(services.knowledgeBase.load()) }
     var showPinDialog by remember { mutableStateOf(false) }
+    var showAdminPinDialog by remember { mutableStateOf(false) }
 
     fun toast(text: String) = Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 
@@ -39,7 +40,7 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
             .padding(horizontal = 16.dp)
             .padding(top = 16.dp)
     ) {
-        ScreenHeader(title = "Instellingen", actionLabel = "Terug", onAction = onBack)
+        ScreenHeader(title = "Beheer", actionLabel = "Terug", onAction = onBack)
 
         Column(
             modifier = Modifier
@@ -48,6 +49,10 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
                 .padding(bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            Section("📎 Documenten: regels, afspraken, werkwijze") {
+                DocumentsSection(services)
+            }
+
             Section("📚 Kennisbank UBB2") {
                 Text(
                     "Dit is wat de AI weet over de afdeling: afspraken, regels en de doelgroep. " +
@@ -128,7 +133,10 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
                         shape = CircleShape,
                         colors = ButtonDefaults.buttonColors(containerColor = SagePrimary)
                     ) { Text("Code opslaan") }
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(onClick = { showPinDialog = true }, shape = CircleShape) { Text("Begeleider-PIN wijzigen") }
+                    OutlinedButton(onClick = { showAdminPinDialog = true }, shape = CircleShape) { Text("Beheerders-PIN wijzigen") }
                 }
             }
         }
@@ -139,6 +147,15 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
             title = "Nieuwe begeleider-PIN",
             onDismiss = { showPinDialog = false },
             onPinSet = { pin -> settings.setBegeleiderPin(pin); showPinDialog = false; toast("PIN gewijzigd") }
+        )
+    }
+
+    if (showAdminPinDialog) {
+        NewPinDialog(
+            title = "Nieuwe beheerders-PIN",
+            message = "Met deze PIN kom je bij het beheer. Gebruik een andere PIN dan de begeleider-PIN.",
+            onDismiss = { showAdminPinDialog = false },
+            onPinSet = { pin -> settings.setAdminPin(pin); showAdminPinDialog = false; toast("Beheerders-PIN gewijzigd") }
         )
     }
 }

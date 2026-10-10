@@ -80,8 +80,8 @@ fun BegeleiderHomeScreen(
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Tile(
                     emoji = "⚙️",
-                    title = "Instellingen",
-                    description = "Kennisbank UBB2, AI-sleutel, codes",
+                    title = "Beheer",
+                    description = "Kennisbank, documenten met regels en afspraken, AI-sleutel, codes (beheerders-PIN)",
                     onClick = onOpenSettings
                 )
             }

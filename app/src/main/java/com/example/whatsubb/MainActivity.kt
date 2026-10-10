@@ -16,6 +16,7 @@ import com.example.whatsubb.audio.AudioRecorder
 import com.example.whatsubb.data.AppSettings
 import com.example.whatsubb.data.DocumentType
 import com.example.whatsubb.data.KnowledgeBase
+import com.example.whatsubb.data.KnowledgeDocuments
 import com.example.whatsubb.data.Role
 import com.example.whatsubb.ui.*
 import com.example.whatsubb.ui.theme.*
@@ -23,7 +24,7 @@ import com.example.whatsubb.ui.theme.*
 /** Simpele "container" met alles wat de schermen nodig hebben. */
 class AppServices(context: Context) {
     val settings = AppSettings(context)
-    val knowledgeBase = KnowledgeBase(context)
+    val knowledgeBase = KnowledgeBase(context, KnowledgeDocuments(context))
 
     init {
         // Opnames die achtergebleven zijn (bijv. na een crash) direct wissen.
@@ -64,6 +65,29 @@ private sealed interface Screen {
 @Composable
 fun MainScreen(services: AppServices) {
     var screen by remember { mutableStateOf<Screen>(Screen.Login) }
+    var askAdminPin by remember { mutableStateOf(false) }
+
+    // Beheer (kennisbank, documenten, sleutel, codes) zit achter een aparte beheerders-PIN.
+    if (askAdminPin) {
+        val openSettings = { askAdminPin = false; screen = Screen.Settings }
+        if (services.settings.hasAdminPin) {
+            CodeDialog(
+                title = "Beheerders-PIN",
+                message = "Het beheer is alleen voor de beheerder van de app.",
+                numeric = true,
+                onDismiss = { askAdminPin = false },
+                onSubmit = { pin -> services.settings.checkAdminPin(pin).also { if (it) openSettings() } }
+            )
+        } else {
+            NewPinDialog(
+                title = "Stel een beheerders-PIN in",
+                message = "Met deze PIN kom je bij het beheer: kennisbank, documenten, AI-sleutel en codes. " +
+                    "Gebruik een andere PIN dan de begeleider-PIN. Minimaal 4 cijfers.",
+                onDismiss = { askAdminPin = false },
+                onPinSet = { pin -> services.settings.setAdminPin(pin); openSettings() }
+            )
+        }
+    }
 
     // Terug-knop: binnen het begeleidersdeel terug naar het menu, anders uitloggen.
     BackHandler(enabled = screen != Screen.Login) {
@@ -87,7 +111,7 @@ fun MainScreen(services: AppServices) {
             apiKeyMissing = services.settings.apiKey.isBlank(),
             onOpenChat = { screen = Screen.BegeleiderChat },
             onOpenDocument = { screen = Screen.Document(it) },
-            onOpenSettings = { screen = Screen.Settings },
+            onOpenSettings = { askAdminPin = true },
             onLogout = { screen = Screen.Login }
         )
         Screen.BegeleiderChat -> ChatScreen(

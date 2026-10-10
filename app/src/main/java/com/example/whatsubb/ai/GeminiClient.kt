@@ -19,8 +19,8 @@ class AiException(message: String) : Exception(message)
 interface AiClient {
     suspend fun generate(systemPrompt: String, history: List<Turn>): String
 
-    /** Zet een audiobestand om naar tekst volgens [instruction]. */
-    suspend fun transcribe(audio: File, mimeType: String, instruction: String): String
+    /** Stuurt een bestand (audio, PDF) naar de AI en geeft de tekst terug volgens [instruction]. */
+    suspend fun processFile(file: File, mimeType: String, instruction: String): String
 }
 
 /** Praat via de REST-API met Google Gemini. Geen extra libraries nodig. */
@@ -52,10 +52,10 @@ class GeminiClient(
             parseText(postJson(generateUrl(), body, readTimeoutMs = 90_000).body)
         }
 
-    override suspend fun transcribe(audio: File, mimeType: String, instruction: String): String =
+    override suspend fun processFile(file: File, mimeType: String, instruction: String): String =
         withContext(Dispatchers.IO) {
             requireKey()
-            val fileName = uploadFile(audio, mimeType)
+            val fileName = uploadFile(file, mimeType)
             try {
                 val fileUri = waitUntilActive(fileName)
                 val body = JSONObject().apply {
@@ -119,7 +119,7 @@ class GeminiClient(
 
     private fun requireKey() {
         if (apiKey.isBlank()) {
-            throw AiException("Er is nog geen API-sleutel ingesteld. Een begeleider kan dit doen via Instellingen.")
+            throw AiException("Er is nog geen API-sleutel ingesteld. De beheerder kan dit doen via Beheer.")
         }
     }
 
@@ -194,7 +194,7 @@ class GeminiClient(
         return when (code) {
             400 -> "De aanvraag werd geweigerd (400). Klopt de API-sleutel en het model? ${apiMessage.orEmpty()}"
             401, 403 -> "De API-sleutel is ongeldig of heeft geen toegang (fout $code)."
-            404 -> "Het model '$model' bestaat niet (meer). Pas het model aan in Instellingen."
+            404 -> "Het model '$model' bestaat niet (meer). Pas het model aan via Beheer."
             413 -> "De opname is te groot om te versturen."
             429 -> "Te veel vragen tegelijk of het tegoed is op. Probeer het over een minuutje opnieuw."
             in 500..599 -> "De AI-dienst heeft even een storing (fout $code). Probeer het later opnieuw."
