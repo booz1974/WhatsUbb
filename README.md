@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img alt="Versie" src="https://img.shields.io/badge/versie-1.1.1-5B8276">
+  <img alt="Versie" src="https://img.shields.io/badge/versie-1.2-5B8276">
   <img alt="Android" src="https://img.shields.io/badge/Android-7.0%2B-5B8276?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-Jetpack%20Compose-DDA77A?logo=kotlin&logoColor=white">
   <img alt="AI" src="https://img.shields.io/badge/AI-Google%20Gemini-2C3E35?logo=googlegemini&logoColor=white">
@@ -36,7 +36,7 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
   &nbsp;&nbsp;
   <img src="docs/screenshots/bewoner-welkom.png" alt="Welkomstscherm bewoner" width="230">
   &nbsp;&nbsp;
-  <img src="docs/screenshots/bewoner-chat.png" alt="Chat met de AI" width="230">
+  <img src="docs/screenshots/bewoner-chat.png" alt="Chat met de AI, met de 113-knoppen" width="230">
 </p>
 
 ---
@@ -52,6 +52,7 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 | 👆 **Voorbeeldvragen** | Aanklikbare vragen zoals *"Wat eten we vanavond?"* en *"Ik voel me niet zo goed"* |
 | 📞 **Bel-knop** | Eén tik om de begeleiding te bellen; tussen 23:00 en 08:00 de bereikbare dienst (met controlevraag) |
 | 🆘 **Veilig** | Bij crisis verwijst de AI naar de begeleiding, de bereikbare dienst, 112 of 113, afhankelijk van het tijdstip |
+| 💚 **113-knoppen** | Gaat het over somberheid of suïcidale gedachten? Dan verschijnen onder het antwoord knoppen om 113 te bellen of te chatten (gratis, anoniem, dag en nacht) |
 
 ### 🧑‍💼 Voor begeleiders (begeleider-PIN)
 

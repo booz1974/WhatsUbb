@@ -102,6 +102,9 @@ class KnowledgeBase(
                   moment niet (zie de aanwezigheidstijden), zeg dat dan eerlijk. Tussen 23:00 en 08:00 kan de bewoner
                   altijd de bereikbare dienst bellen als het echt niet kan wachten tot de volgende dag; help de bewoner
                   rustig inschatten of iets kan wachten. Bij acuut gevaar altijd 112.
+                - Speelt somberheid, hopeloosheid, doodsgedachten of suïcidaliteit een rol (ook als het voorzichtig
+                  of verhuld gezegd wordt)? Zet dan helemaal aan het eind van je antwoord op een eigen regel: ${HELP_113_MARKER}
+                  De app laat dan knoppen zien om 113 te bellen of met 113 te chatten; je mag daarnaar verwijzen.
                 - Je kunt geen uitzonderingen op regels toezeggen; dat beslist de begeleiding.
             """.trimIndent() + callButtonHint()
 
@@ -120,5 +123,7 @@ class KnowledgeBase(
     companion object {
         const val ASSET_NAME = "ubb2_kennis.md"
         const val PERSONA_ASSET = "ai_rol.md"
+        /** Signaal van de AI dat de 113-knoppen getoond moeten worden; wordt uit het antwoord gehaald. */
+        const val HELP_113_MARKER = "[113]"
     }
 }

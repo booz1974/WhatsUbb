@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.example.whatsubb.AppServices
 import com.example.whatsubb.ai.AiException
 import com.example.whatsubb.ai.Turn
+import com.example.whatsubb.data.KnowledgeBase
 import com.example.whatsubb.data.Role
 import com.example.whatsubb.privacy.Anonymizer
 import com.example.whatsubb.ui.theme.*
@@ -94,14 +95,14 @@ fun ChatScreen(
         }
     }
     var confirmNightCall by remember { mutableStateOf(false) }
+    var pendingPhone by remember { mutableStateOf<String?>(null) }
 
-    fun call(direct: Boolean) {
-        val phone = callTarget?.phone ?: return
+    fun call(phone: String, direct: Boolean) {
         val uri = Uri.parse("tel:" + phone.filter { it.isDigit() || it == '+' })
         try {
             context.startActivity(Intent(if (direct) Intent.ACTION_CALL else Intent.ACTION_DIAL, uri))
         } catch (e: SecurityException) {
-            call(direct = false)
+            call(phone, direct = false)
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(context, "Bellen kan niet op dit apparaat. Het nummer is $phone", Toast.LENGTH_LONG).show()
         }
@@ -109,12 +110,26 @@ fun ChatScreen(
 
     // Eerste keer: toestemming vragen om direct te bellen; zonder toestemming opent de telefoon-app met het nummer.
     val callPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        call(direct = granted)
+        pendingPhone?.let { call(it, direct = granted) }
+        pendingPhone = null
     }
 
-    fun startCall() {
+    fun startCall(phone: String? = callTarget?.phone) {
+        if (phone == null) return
         val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
-        if (granted) call(direct = true) else callPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+        if (granted) call(phone, direct = true)
+        else {
+            pendingPhone = phone
+            callPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+        }
+    }
+
+    fun open113Chat() {
+        try {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(HELP_113_CHAT_URL)))
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(context, "Open 113.nl/chat in je browser", Toast.LENGTH_LONG).show()
+        }
     }
 
     fun onCallButton() {
@@ -138,8 +153,12 @@ fun ChatScreen(
                     systemPrompt = services.knowledgeBase.systemPrompt(role),
                     history = history.takeLast(MAX_TURNS).dropWhile { !it.fromUser }
                 )
-                messages.add(ChatMessage(reply, isUser = false))
-                history.add(Turn(fromUser = false, text = reply))
+                // De AI geeft met een vaste markering aan dat 113 erbij hoort; als vangnet kijken we ook naar de vraag zelf.
+                val answer = reply.replace(KnowledgeBase.HELP_113_MARKER, "").trim()
+                val show113 = role == Role.BEWONER &&
+                    (reply.contains(KnowledgeBase.HELP_113_MARKER) || mentions113Topic(query))
+                messages.add(ChatMessage(answer, isUser = false, show113 = show113))
+                history.add(Turn(fromUser = false, text = answer))
             } catch (e: AiException) {
                 messages.add(ChatMessage(e.message.orEmpty(), isUser = false, isError = true))
                 history.removeAt(history.lastIndex) // mislukte vraag niet meesturen
@@ -287,7 +306,12 @@ fun ChatScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp)
                 ) {
-                    items(messages) { msg -> ChatBubble(message = msg) }
+                    items(messages) { msg ->
+                        Column {
+                            ChatBubble(message = msg)
+                            if (msg.show113) Help113Card(onCall = { startCall(HELP_113_PHONE) }, onChat = ::open113Chat)
+                        }
+                    }
                     if (isLoading) item { TypingBubble() }
                 }
             }
@@ -318,6 +342,59 @@ fun ChatScreen(
 }
 
 private const val MAX_TURNS = 20
+
+/** 113 Zelfmoordpreventie: gratis, anoniem, dag en nacht. */
+private const val HELP_113_PHONE = "0800-0113"
+private const val HELP_113_CHAT_URL = "https://www.113.nl/chat"
+
+private val HELP_113_WORDS = listOf(
+    "zelfmoord", "suïcid", "suicid", "zelfdoding", "dood wil", "dood zijn", "niet meer leven",
+    "niet meer wil leven", "einde maken", "er niet meer zijn", "er een eind aan", "mezelf iets aandoen",
+    "somber", "depressief", "hopeloos", "geen zin meer in", "geen zin in het leven", "alles is zinloos"
+)
+
+private fun mentions113Topic(text: String): Boolean {
+    val lower = text.lowercase()
+    return HELP_113_WORDS.any { it in lower }
+}
+
+/** Kaartje onder een antwoord over somberheid of suïcidale gedachten. */
+@Composable
+private fun Help113Card(onCall: () -> Unit, onChat: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                "Praten met 113 kan altijd",
+                fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextDark, textAlign = TextAlign.Center
+            )
+            Text(
+                "Gratis en anoniem, dag en nacht. Je kunt ook altijd naar de begeleiding gaan.",
+                fontSize = 13.sp, color = TextDark.copy(alpha = 0.7f), textAlign = TextAlign.Center,
+                lineHeight = 18.sp, modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
+            )
+            Button(
+                onClick = onCall,
+                shape = CircleShape,
+                colors = ButtonDefaults.buttonColors(containerColor = PeachAccent),
+                modifier = Modifier.fillMaxWidth().height(48.dp)
+            ) {
+                Text("📞  Bel 113", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = onChat,
+                shape = CircleShape,
+                modifier = Modifier.fillMaxWidth().height(48.dp)
+            ) {
+                Text("💬  Chat met 113", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = SagePrimary)
+            }
+        }
+    }
+}
 
 private val EXAMPLE_QUESTIONS = listOf(
     "🍽️" to "Wat eten we vanavond?",

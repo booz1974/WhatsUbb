@@ -28,7 +28,9 @@ import com.example.whatsubb.ui.theme.*
 data class ChatMessage(
     val text: String,
     val isUser: Boolean,
-    val isError: Boolean = false
+    val isError: Boolean = false,
+    /** Onder dit antwoord de knoppen naar 113 Zelfmoordpreventie tonen. */
+    val show113: Boolean = false
 )
 
 /** Bovenbalk met titel en een tekstknop rechts (terug / uitloggen). */
