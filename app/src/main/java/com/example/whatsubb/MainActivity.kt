@@ -27,7 +27,7 @@ class AppServices(context: Context) {
     val settings = AppSettings(context)
     val knowledgeBase = KnowledgeBase(
         context, KnowledgeDocuments(context), WeekInfoStore(context),
-        hasCallButton = { settings.begeleidingPhone.isNotBlank() }
+        callButtonLabel = { settings.currentCallTarget()?.label }
     )
 
     init {

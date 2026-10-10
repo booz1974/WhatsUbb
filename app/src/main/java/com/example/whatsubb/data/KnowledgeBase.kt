@@ -15,8 +15,15 @@ class KnowledgeBase(
     private val context: Context,
     val documents: KnowledgeDocuments,
     val weekInfo: WeekInfoStore,
-    private val hasCallButton: () -> Boolean = { false }
+    /** Tekst op de bel-knop die bewoners nu zien, of null als er geen knop is. */
+    private val callButtonLabel: () -> String? = { null }
 ) {
+
+    private fun callButtonHint(): String {
+        val label = callButtonLabel() ?: return ""
+        return "\n- In de app staat bovenaan een knop \"$label\". Moet de bewoner iemand dringend spreken, " +
+            "wijs dan op die knop."
+    }
 
     private val overrideFile = File(context.filesDir, "ubb2_kennis.md")
 
@@ -92,12 +99,11 @@ class KnowledgeBase(
                 - Gaat het over crisis, gevaar of zelfbeschadiging: zeg duidelijk dat de bewoner direct
                   naar de begeleiding moet gaan, of bij acuut gevaar 112 moet bellen. Bij suïcidale gedachten
                   kan ook 113 (0800-0113) gebeld worden. Kijk naar de tijd van nu: is de begeleiding er op dit
-                  moment niet (zie de aanwezigheidstijden), zeg dat dan eerlijk en wijs bij nood op 112 of 113.
+                  moment niet (zie de aanwezigheidstijden), zeg dat dan eerlijk. Tussen 23:00 en 08:00 kan de bewoner
+                  altijd de bereikbare dienst bellen als het echt niet kan wachten tot de volgende dag; help de bewoner
+                  rustig inschatten of iets kan wachten. Bij acuut gevaar altijd 112.
                 - Je kunt geen uitzonderingen op regels toezeggen; dat beslist de begeleiding.
-            """.trimIndent() + if (hasCallButton()) "\n" + """
-                - In de app staat bovenaan een knop "Bel de begeleiding". Wil of moet de bewoner de begeleiding
-                  dringend spreken, wijs dan op die knop.
-            """.trimIndent() else ""
+            """.trimIndent() + callButtonHint()
 
             Role.BEGELEIDER -> """
                 JE PRAAT NU MET EEN BEGELEIDER (professional):

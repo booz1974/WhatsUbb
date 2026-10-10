@@ -8,6 +8,8 @@ import java.security.MessageDigest
  * Lokale instellingen van de app. Er worden hier GEEN persoonsgegevens opgeslagen,
  * alleen technische instellingen en (gehashte) toegangscodes.
  */
+data class CallTarget(val label: String, val phone: String, val confirmFirst: Boolean)
+
 class AppSettings(context: Context) {
 
     private val prefs = context.getSharedPreferences("whatsubb_settings", Context.MODE_PRIVATE)
@@ -25,6 +27,24 @@ class AppSettings(context: Context) {
     var begeleidingPhone: String
         get() = prefs.getString(KEY_PHONE, null).orEmpty()
         set(value) = prefs.edit().putString(KEY_PHONE, value.trim()).apply()
+
+    /** Nummer van de bereikbare dienst (23:00-08:00); leeg = 's nachts geen knop. */
+    var bereikbareDienstPhone: String
+        get() = prefs.getString(KEY_NIGHT_PHONE, null).orEmpty()
+        set(value) = prefs.edit().putString(KEY_NIGHT_PHONE, value.trim()).apply()
+
+    /** Welk nummer de bel-knop nu belt: overdag de begeleiding, 's nachts de bereikbare dienst. */
+    fun currentCallTarget(now: java.util.Calendar = java.util.Calendar.getInstance()): CallTarget? {
+        val hour = now.get(java.util.Calendar.HOUR_OF_DAY)
+        val night = hour >= 23 || hour < 8
+        return when {
+            night && bereikbareDienstPhone.isNotBlank() ->
+                CallTarget("Bel de bereikbare dienst", bereikbareDienstPhone, confirmFirst = true)
+            !night && begeleidingPhone.isNotBlank() ->
+                CallTarget("Bel de begeleiding", begeleidingPhone, confirmFirst = false)
+            else -> null
+        }
+    }
 
     val hasBegeleiderPin: Boolean
         get() = prefs.contains(KEY_PIN_HASH)
@@ -70,5 +90,6 @@ class AppSettings(context: Context) {
         private const val KEY_BEWONER_HASH = "bewoner_code_hash"
         private const val KEY_ADMIN_HASH = "admin_pin_hash"
         private const val KEY_PHONE = "begeleiding_phone"
+        private const val KEY_NIGHT_PHONE = "bereikbare_dienst_phone"
     }
 }

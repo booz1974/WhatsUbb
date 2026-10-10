@@ -36,6 +36,7 @@ import com.example.whatsubb.ai.Turn
 import com.example.whatsubb.data.Role
 import com.example.whatsubb.privacy.Anonymizer
 import com.example.whatsubb.ui.theme.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -84,9 +85,18 @@ fun ChatScreen(
         }
     }
 
-    val phone = services.settings.begeleidingPhone
+    // Overdag de begeleiding, tussen 23:00 en 08:00 de bereikbare dienst (elke minuut opnieuw bepaald).
+    var callTarget by remember { mutableStateOf(services.settings.currentCallTarget()) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(60_000)
+            callTarget = services.settings.currentCallTarget()
+        }
+    }
+    var confirmNightCall by remember { mutableStateOf(false) }
 
     fun call(direct: Boolean) {
+        val phone = callTarget?.phone ?: return
         val uri = Uri.parse("tel:" + phone.filter { it.isDigit() || it == '+' })
         try {
             context.startActivity(Intent(if (direct) Intent.ACTION_CALL else Intent.ACTION_DIAL, uri))
@@ -102,9 +112,13 @@ fun ChatScreen(
         call(direct = granted)
     }
 
-    fun callBegeleiding() {
+    fun startCall() {
         val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
         if (granted) call(direct = true) else callPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+    }
+
+    fun onCallButton() {
+        if (callTarget?.confirmFirst == true) confirmNightCall = true else startCall()
     }
 
     fun send(text: String = questionText) {
@@ -167,14 +181,15 @@ fun ChatScreen(
 
             Spacer(modifier = Modifier.height(if (messages.isEmpty()) 20.dp else 12.dp))
 
-            if (isBewoner && phone.isNotBlank()) {
+            val target = callTarget
+            if (isBewoner && target != null) {
                 Button(
-                    onClick = ::callBegeleiding,
+                    onClick = ::onCallButton,
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = PeachAccent),
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).height(52.dp)
                 ) {
-                    Text("📞  Bel de begeleiding", fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                    Text("📞  ${target.label}", fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
                 }
                 Spacer(modifier = Modifier.height(if (messages.isEmpty()) 20.dp else 12.dp))
             }
@@ -277,6 +292,28 @@ fun ChatScreen(
                 }
             }
         }
+    }
+
+    if (confirmNightCall) {
+        AlertDialog(
+            onDismissRequest = { confirmNightCall = false },
+            title = { Text("Kan het echt niet wachten tot morgen?") },
+            text = {
+                Text(
+                    "'s Nachts is de begeleiding er niet. De bereikbare dienst is er voor dingen die " +
+                        "echt niet kunnen wachten tot morgen. Is er gevaar? Bel dan 112.",
+                    lineHeight = 20.sp
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { confirmNightCall = false; startCall() }) {
+                    Text("Ja, bellen", color = SagePrimary, fontWeight = FontWeight.SemiBold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmNightCall = false }) { Text("Nee, het kan wachten") }
+            }
+        )
     }
 }
 
