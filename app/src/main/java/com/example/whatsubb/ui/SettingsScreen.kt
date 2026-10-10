@@ -31,6 +31,7 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
     var showPinDialog by remember { mutableStateOf(false) }
     var showAdminPinDialog by remember { mutableStateOf(false) }
     var phone by remember { mutableStateOf(settings.begeleidingPhone) }
+    var persona by remember { mutableStateOf(services.knowledgeBase.loadPersona()) }
 
     fun toast(text: String) = Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 
@@ -52,6 +53,34 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
                 .padding(bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            Section("🧠 AI-rol") {
+                Text(
+                    "Deze tekst gaat bij elke vraag en elk document als eerste mee naar de AI: wie de AI is, " +
+                        "voor welke doelgroep, met welke methodieken en wanneer de begeleiding aanwezig is.",
+                    fontSize = 13.sp, color = TextDark.copy(alpha = 0.75f)
+                )
+                OutlinedTextField(
+                    value = persona,
+                    onValueChange = { persona = it },
+                    minLines = 6,
+                    maxLines = 14,
+                    textStyle = LocalTextStyle.current.copy(fontSize = 13.sp),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Button(
+                        onClick = { services.knowledgeBase.savePersona(persona); toast("AI-rol opgeslagen") },
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(containerColor = SagePrimary)
+                    ) { Text("Opslaan") }
+                    OutlinedButton(onClick = {
+                        services.knowledgeBase.resetPersona()
+                        persona = services.knowledgeBase.loadPersona()
+                        toast("Standaardtekst teruggezet")
+                    }, shape = CircleShape) { Text("Standaard herstellen") }
+                }
+            }
+
             Section("📞 Bel-knop voor bewoners") {
                 Text(
                     "Vul het 06-nummer van de begeleiding in. Bewoners zien dan een knop waarmee ze met één tik bellen. " +

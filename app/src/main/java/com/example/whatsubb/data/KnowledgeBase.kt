@@ -42,6 +42,19 @@ class KnowledgeBase(
         overrideFile.delete()
     }
 
+    /** De rol/persoonlijkheid van de AI; gaat vóór elke vraag en elk document mee. */
+    private val personaFile = File(context.filesDir, "ai_rol.md")
+
+    fun loadPersona(): String =
+        if (personaFile.exists()) personaFile.readText()
+        else context.assets.open(PERSONA_ASSET).bufferedReader().use { it.readText() }
+
+    fun savePersona(text: String) = personaFile.writeText(text)
+
+    fun resetPersona() {
+        personaFile.delete()
+    }
+
     fun systemPrompt(role: Role): String {
         val common = """
             Je bent "Whats Ubb", de digitale assistent van afdeling UBB2.
@@ -78,7 +91,8 @@ class KnowledgeBase(
                 - Geef geen medisch, juridisch of medicatie-advies; verwijs dan naar de begeleiding of behandelaar.
                 - Gaat het over crisis, gevaar of zelfbeschadiging: zeg duidelijk dat de bewoner direct
                   naar de begeleiding moet gaan, of bij acuut gevaar 112 moet bellen. Bij suïcidale gedachten
-                  kan ook 113 (0800-0113) gebeld worden.
+                  kan ook 113 (0800-0113) gebeld worden. Kijk naar de tijd van nu: is de begeleiding er op dit
+                  moment niet (zie de aanwezigheidstijden), zeg dat dan eerlijk en wijs bij nood op 112 of 113.
                 - Je kunt geen uitzonderingen op regels toezeggen; dat beslist de begeleiding.
             """.trimIndent() + if (hasCallButton()) "\n" + """
                 - In de app staat bovenaan een knop "Bel de begeleiding". Wil of moet de bewoner de begeleiding
@@ -94,10 +108,11 @@ class KnowledgeBase(
                   in plaats van iets te verzinnen.
             """.trimIndent()
         }
-        return common + "\n\n" + roleSpecific
+        return "JOUW ROL:\n" + loadPersona().trim() + "\n\n" + common + "\n\n" + roleSpecific
     }
 
     companion object {
         const val ASSET_NAME = "ubb2_kennis.md"
+        const val PERSONA_ASSET = "ai_rol.md"
     }
 }
