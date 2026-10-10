@@ -12,7 +12,9 @@ data class DocumentType(
     val title: String,
     val description: String,
     val instructions: String,
-    val fields: List<DocField>
+    val fields: List<DocField>,
+    /** Als dit is ingesteld, kan een gesprek worden opgenomen; de transcriptie komt in dit veld. */
+    val transcriptFieldIndex: Int? = null
 )
 
 /** De dingen die een begeleider met de AI kan maken. Breid deze lijst gerust uit. */
@@ -67,9 +69,10 @@ val documentTypes = listOf(
         fields = listOf(
             DocField("Soort gesprek", "Bijv. evaluatie, MDO, mentorgesprek", multiline = false),
             DocField("Aanwezigen (rollen, geen namen)", "Bijv. bewoner, mentor, behandelaar", multiline = false),
-            DocField("Aantekeningen", "Wat is er besproken?"),
+            DocField("Aantekeningen / transcriptie", "Wat is er besproken? Of neem het gesprek op."),
             DocField("Afspraken", "Wat is er afgesproken?")
-        )
+        ),
+        transcriptFieldIndex = 2
     ),
     DocumentType(
         id = "incident",

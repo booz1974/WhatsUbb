@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.example.whatsubb.ai.AiClient
 import com.example.whatsubb.ai.GeminiClient
+import com.example.whatsubb.audio.AudioRecorder
 import com.example.whatsubb.data.AppSettings
 import com.example.whatsubb.data.DocumentType
 import com.example.whatsubb.data.KnowledgeBase
@@ -23,6 +24,11 @@ import com.example.whatsubb.ui.theme.*
 class AppServices(context: Context) {
     val settings = AppSettings(context)
     val knowledgeBase = KnowledgeBase(context)
+
+    init {
+        // Opnames die achtergebleven zijn (bijv. na een crash) direct wissen.
+        AudioRecorder.deleteAll(context)
+    }
 
     /** Nieuwe client per aanvraag, zodat gewijzigde instellingen direct gelden. */
     fun aiClient(): AiClient = GeminiClient(apiKey = settings.apiKey, model = settings.model)

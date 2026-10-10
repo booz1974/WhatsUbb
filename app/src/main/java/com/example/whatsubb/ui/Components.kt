@@ -18,6 +18,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -180,7 +181,7 @@ fun ChatBubble(message: ChatMessage) {
                 )
         ) {
             Text(
-                text = message.text,
+                text = if (message.isUser) AnnotatedString(message.text) else markdownToAnnotated(message.text),
                 fontSize = 15.sp,
                 color = if (message.isUser) Color.White else TextDark,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),

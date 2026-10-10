@@ -5,6 +5,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -26,6 +28,7 @@ import com.example.whatsubb.data.DocumentType
 import com.example.whatsubb.data.Role
 import com.example.whatsubb.privacy.Anonymizer
 import com.example.whatsubb.ui.theme.*
+import com.example.whatsubb.util.PdfExporter
 import kotlinx.coroutines.launch
 
 @Composable
@@ -39,6 +42,19 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
     var isLoading by remember { mutableStateOf(false) }
     var scrubCount by remember { mutableIntStateOf(0) }
     var feedback by remember { mutableStateOf("") }
+
+    val pdfLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri ->
+        val text = result ?: return@rememberLauncherForActivityResult
+        if (uri != null) {
+            runCatching {
+                context.contentResolver.openOutputStream(uri)?.use { PdfExporter.write(context, it, type.title, text) }
+            }.onSuccess {
+                Toast.makeText(context, "PDF opgeslagen", Toast.LENGTH_SHORT).show()
+            }.onFailure {
+                Toast.makeText(context, "PDF maken mislukt", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     fun generate(revision: String? = null) {
         if (values.all { it.isBlank() }) {
@@ -119,6 +135,15 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
 
             Spacer(Modifier.height(12.dp))
 
+            type.transcriptFieldIndex?.let { target ->
+                RecordingSection(services) { transcript ->
+                    values[target] = listOf(values[target].trim(), transcript.trim())
+                        .filter { it.isNotEmpty() }
+                        .joinToString("\n\n")
+                }
+                Spacer(Modifier.height(8.dp))
+            }
+
             type.fields.forEachIndexed { index, field ->
                 OutlinedTextField(
                     value = values[index],
@@ -167,7 +192,7 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
                 ) {
                     Column(Modifier.padding(16.dp)) {
                         SelectionContainer {
-                            Text(text, fontSize = 15.sp, lineHeight = 21.sp, color = TextDark)
+                            Text(markdownToAnnotated(text), fontSize = 15.sp, lineHeight = 21.sp, color = TextDark)
                         }
                         Spacer(Modifier.height(12.dp))
                         Text(
@@ -175,7 +200,13 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
                             fontSize = 12.sp,
                             color = TextDark.copy(alpha = 0.6f)
                         )
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 8.dp)) {
+                        Button(
+                            onClick = { pdfLauncher.launch(pdfFileName(type.title)) },
+                            shape = CircleShape,
+                            colors = ButtonDefaults.buttonColors(containerColor = SagePrimary),
+                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                        ) { Text("📄  Download als PDF") }
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 4.dp)) {
                             OutlinedButton(onClick = { copyToClipboard(context, text) }, shape = CircleShape) { Text("Kopiëren") }
                             OutlinedButton(onClick = { shareText(context, type.title, text) }, shape = CircleShape) { Text("Delen") }
                         }
@@ -196,6 +227,11 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
             }
         }
     }
+}
+
+private fun pdfFileName(title: String): String {
+    val date = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
+    return "${title.replace(' ', '_')}_$date.pdf"
 }
 
 private fun copyToClipboard(context: Context, text: String) {

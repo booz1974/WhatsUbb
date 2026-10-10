@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Voor het opnemen van gesprekken (gespreksverslag) -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <!-- Nodig om de spraakherkenning van het toestel te vinden (Android 11+) -->
     <queries>
