@@ -1,6 +1,7 @@
 package com.example.whatsubb.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -9,15 +10,19 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.whatsubb.AppServices
+import com.example.whatsubb.BuildConfig
+import com.example.whatsubb.R
 import com.example.whatsubb.ui.theme.*
 
 @Composable
@@ -208,6 +213,8 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
                     OutlinedButton(onClick = { showAdminPinDialog = true }, shape = CircleShape) { Text("Beheerders-PIN wijzigen") }
                 }
             }
+
+            AboutFooter()
         }
     }
 
@@ -225,6 +232,31 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
             message = "Met deze PIN kom je bij het beheer. Gebruik een andere PIN dan de begeleider-PIN.",
             onDismiss = { showAdminPinDialog = false },
             onPinSet = { pin -> settings.setAdminPin(pin); showAdminPinDialog = false; toast("Beheerders-PIN gewijzigd") }
+        )
+    }
+}
+
+/** Maker, versie en datum onderaan het beheerscherm. */
+@Composable
+private fun AboutFooter() {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(R.drawable.whats_ubb_logo),
+            contentDescription = null,
+            modifier = Modifier.size(56.dp)
+        )
+        Spacer(Modifier.height(8.dp))
+        Text("Whats Ubb", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = TextDark)
+        Text(
+            "Versie ${BuildConfig.VERSION_NAME}  ·  ${BuildConfig.RELEASE_DATE}",
+            fontSize = 13.sp, color = TextDark.copy(alpha = 0.7f)
+        )
+        Text(
+            "Gemaakt door Jeroen van Sonsbeek",
+            fontSize = 13.sp, color = TextDark.copy(alpha = 0.7f)
         )
     }
 }
