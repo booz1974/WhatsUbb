@@ -21,6 +21,11 @@ class AppSettings(context: Context) {
         get() = prefs.getString(KEY_MODEL, null)?.takeIf { it.isNotBlank() } ?: DEFAULT_MODEL
         set(value) = prefs.edit().putString(KEY_MODEL, value.trim()).apply()
 
+    /** 06-nummer van de begeleiding voor de bel-knop bij bewoners (leeg = geen knop). */
+    var begeleidingPhone: String
+        get() = prefs.getString(KEY_PHONE, null).orEmpty()
+        set(value) = prefs.edit().putString(KEY_PHONE, value.trim()).apply()
+
     val hasBegeleiderPin: Boolean
         get() = prefs.contains(KEY_PIN_HASH)
 
@@ -64,5 +69,6 @@ class AppSettings(context: Context) {
         private const val KEY_PIN_HASH = "begeleider_pin_hash"
         private const val KEY_BEWONER_HASH = "bewoner_code_hash"
         private const val KEY_ADMIN_HASH = "admin_pin_hash"
+        private const val KEY_PHONE = "begeleiding_phone"
     }
 }

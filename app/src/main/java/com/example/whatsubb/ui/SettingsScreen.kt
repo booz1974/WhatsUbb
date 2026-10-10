@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +30,7 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
     var knowledge by remember { mutableStateOf(services.knowledgeBase.load()) }
     var showPinDialog by remember { mutableStateOf(false) }
     var showAdminPinDialog by remember { mutableStateOf(false) }
+    var phone by remember { mutableStateOf(settings.begeleidingPhone) }
 
     fun toast(text: String) = Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 
@@ -49,6 +52,35 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
                 .padding(bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            Section("📞 Bel-knop voor bewoners") {
+                Text(
+                    "Vul het 06-nummer van de begeleiding in. Bewoners zien dan een knop waarmee ze met één tik bellen. " +
+                        "Laat leeg om de knop te verbergen.",
+                    fontSize = 13.sp, color = TextDark.copy(alpha = 0.75f)
+                )
+                OutlinedTextField(
+                    value = phone,
+                    onValueChange = { phone = it.filter { c -> c.isDigit() || c in "+ -" } },
+                    label = { Text("Telefoonnummer begeleiding") },
+                    placeholder = { Text("06 12345678") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Button(
+                    onClick = {
+                        settings.begeleidingPhone = phone
+                        toast(if (phone.isBlank()) "Bel-knop verborgen" else "Telefoonnummer opgeslagen")
+                    },
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = SagePrimary)
+                ) { Text("Opslaan") }
+            }
+
+            Section("🗓️ Weekinfo: weekmenu en werkrooster") {
+                WeekInfoSection(services)
+            }
+
             Section("📎 Documenten: regels, afspraken, werkwijze") {
                 DocumentsSection(services)
             }

@@ -124,18 +124,7 @@ fun DocumentsSection(services: AppServices) {
     }
 
     preview?.let { doc ->
-        AlertDialog(
-            onDismissRequest = { preview = null },
-            title = { Text(doc.name, maxLines = 2, overflow = TextOverflow.Ellipsis) },
-            text = {
-                Box(Modifier.heightIn(max = 420.dp)) {
-                    androidx.compose.foundation.lazy.LazyColumn {
-                        item { Text(markdownToAnnotated(documents.text(doc.id)), fontSize = 13.sp, color = TextDark) }
-                    }
-                }
-            },
-            confirmButton = { TextButton(onClick = { preview = null }) { Text("Sluiten") } }
-        )
+        TextPreviewDialog(title = doc.name, text = documents.text(doc.id), onDismiss = { preview = null })
     }
 }
 

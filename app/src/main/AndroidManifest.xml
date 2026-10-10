@@ -5,6 +5,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Voor het opnemen van gesprekken (gespreksverslag) -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Bel-knop: met één tik de begeleiding bellen -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <!-- Nodig om de spraakherkenning van het toestel te vinden (Android 11+) -->
     <queries>
@@ -37,6 +41,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Voor foto's maken met de camera-app (weekmenu en rooster) -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

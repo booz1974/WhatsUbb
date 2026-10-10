@@ -17,6 +17,7 @@ import com.example.whatsubb.data.AppSettings
 import com.example.whatsubb.data.DocumentType
 import com.example.whatsubb.data.KnowledgeBase
 import com.example.whatsubb.data.KnowledgeDocuments
+import com.example.whatsubb.data.WeekInfoStore
 import com.example.whatsubb.data.Role
 import com.example.whatsubb.ui.*
 import com.example.whatsubb.ui.theme.*
@@ -24,11 +25,16 @@ import com.example.whatsubb.ui.theme.*
 /** Simpele "container" met alles wat de schermen nodig hebben. */
 class AppServices(context: Context) {
     val settings = AppSettings(context)
-    val knowledgeBase = KnowledgeBase(context, KnowledgeDocuments(context))
+    val knowledgeBase = KnowledgeBase(
+        context, KnowledgeDocuments(context), WeekInfoStore(context),
+        hasCallButton = { settings.begeleidingPhone.isNotBlank() }
+    )
 
     init {
         // Opnames die achtergebleven zijn (bijv. na een crash) direct wissen.
         AudioRecorder.deleteAll(context)
+        // Verlopen weekmenu's en roosters opruimen.
+        knowledgeBase.weekInfo.current()
     }
 
     /** Nieuwe client per aanvraag, zodat gewijzigde instellingen direct gelden. */

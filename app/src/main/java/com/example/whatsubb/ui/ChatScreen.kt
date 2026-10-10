@@ -1,8 +1,11 @@
 package com.example.whatsubb.ui
 
+import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.speech.RecognizerIntent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -11,7 +14,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.core.content.ContextCompat
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -77,8 +84,31 @@ fun ChatScreen(
         }
     }
 
-    fun send() {
-        val query = questionText.trim()
+    val phone = services.settings.begeleidingPhone
+
+    fun call(direct: Boolean) {
+        val uri = Uri.parse("tel:" + phone.filter { it.isDigit() || it == '+' })
+        try {
+            context.startActivity(Intent(if (direct) Intent.ACTION_CALL else Intent.ACTION_DIAL, uri))
+        } catch (e: SecurityException) {
+            call(direct = false)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(context, "Bellen kan niet op dit apparaat. Het nummer is $phone", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // Eerste keer: toestemming vragen om direct te bellen; zonder toestemming opent de telefoon-app met het nummer.
+    val callPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        call(direct = granted)
+    }
+
+    fun callBegeleiding() {
+        val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
+        if (granted) call(direct = true) else callPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+    }
+
+    fun send(text: String = questionText) {
+        val query = text.trim()
         if (query.isEmpty() || isLoading) return
         questionText = ""
 
@@ -122,6 +152,8 @@ fun ChatScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                // Zonder berichten kan de welkomsttekst op kleine schermen scrollen.
+                .then(if (messages.isEmpty() && !isLoading) Modifier.verticalScroll(rememberScrollState()) else Modifier)
                 .padding(top = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -133,7 +165,19 @@ fun ChatScreen(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(if (messages.isEmpty()) 32.dp else 16.dp))
+            Spacer(modifier = Modifier.height(if (messages.isEmpty()) 20.dp else 12.dp))
+
+            if (isBewoner && phone.isNotBlank()) {
+                Button(
+                    onClick = ::callBegeleiding,
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = PeachAccent),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).height(52.dp)
+                ) {
+                    Text("📞  Bel de begeleiding", fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                }
+                Spacer(modifier = Modifier.height(if (messages.isEmpty()) 20.dp else 12.dp))
+            }
 
             // Zwevende witte kaart met de vraag en het invoerveld
             Card(
@@ -156,7 +200,7 @@ fun ChatScreen(
                 ) {
                     if (messages.isEmpty()) {
                         Text(
-                            text = if (isBewoner) "Wat wil je weten over de\nregels op UBB2?"
+                            text = if (isBewoner) "Waar kan ik je\nmee helpen?"
                             else "Vraag iets over de afspraken,\nregels of doelgroep",
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
@@ -164,7 +208,19 @@ fun ChatScreen(
                             textAlign = TextAlign.Center,
                             lineHeight = 28.sp
                         )
-                        Spacer(modifier = Modifier.height(24.dp))
+                        if (isBewoner) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                text = "Je kunt mij alles vragen. Over de regels en afspraken, wat we eten of wie er werkt. " +
+                                    "Maar ook als je niet weet hoe iets moet, als je je niet zo fijn voelt, " +
+                                    "ergens bang voor bent of gewoon even wilt praten. Ik denk met je mee.",
+                                fontSize = 15.sp,
+                                color = TextDark.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center,
+                                lineHeight = 21.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
                     }
 
                     ChatInputPill(
@@ -172,9 +228,27 @@ fun ChatScreen(
                         onValueChange = { questionText = it },
                         placeholder = "Typ hier je vraag...",
                         enabled = !isLoading,
-                        onSend = ::send,
+                        onSend = { send() },
                         onMic = ::startListening
                     )
+
+                    if (messages.isEmpty() && isBewoner) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Bijvoorbeeld:", fontSize = 13.sp, color = TextDark.copy(alpha = 0.6f))
+                        Spacer(modifier = Modifier.height(4.dp))
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            EXAMPLE_QUESTIONS.forEach { (emoji, question) ->
+                                SuggestionChip(
+                                    onClick = { send(question) },
+                                    enabled = !isLoading,
+                                    label = { Text("$emoji $question", fontSize = 13.sp) }
+                                )
+                            }
+                        }
+                    }
 
                     if (messages.isEmpty()) {
                         Text(
@@ -207,3 +281,11 @@ fun ChatScreen(
 }
 
 private const val MAX_TURNS = 20
+
+private val EXAMPLE_QUESTIONS = listOf(
+    "🍽️" to "Wat eten we vanavond?",
+    "👥" to "Wie werkt er donderdag?",
+    "📋" to "Hoe laat moet ik binnen zijn?",
+    "🧺" to "Hoe doe ik de was?",
+    "💬" to "Ik voel me niet zo goed"
+)

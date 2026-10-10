@@ -1,6 +1,7 @@
 package com.example.whatsubb.data
 
 import android.content.Context
+import com.example.whatsubb.util.Weeks
 import java.io.File
 
 enum class Role { BEWONER, BEGELEIDER }
@@ -10,9 +11,26 @@ enum class Role { BEWONER, BEGELEIDER }
  * Standaard komt die uit assets/ubb2_kennis.md; een begeleider kan de tekst
  * in de app aanpassen, dan wordt een lokale kopie gebruikt.
  */
-class KnowledgeBase(private val context: Context, val documents: KnowledgeDocuments) {
+class KnowledgeBase(
+    private val context: Context,
+    val documents: KnowledgeDocuments,
+    val weekInfo: WeekInfoStore,
+    private val hasCallButton: () -> Boolean = { false }
+) {
 
     private val overrideFile = File(context.filesDir, "ubb2_kennis.md")
+
+    private fun weekInfoBlock(): String {
+        val info = weekInfo.promptText()
+        val intro = """
+            WEEKINFO (weekmenu en werkrooster, uitgelezen van de foto's die op de afdeling hangen):
+            Gebruik de datum van vandaag om te bepalen welke dag het is. Is er geen info voor de gevraagde week,
+            zeg dan dat die nog niet bekend is en dat de bewoner op het bord kan kijken of het aan de begeleiding kan vragen.
+        """.trimIndent()
+        return "$intro\n\n===== BEGIN WEEKINFO =====\n" +
+            info.ifBlank { "(Er is op dit moment geen actuele weekinfo.)" } +
+            "\n===== EINDE WEEKINFO ====="
+    }
 
     fun load(): String =
         if (overrideFile.exists()) overrideFile.readText()
@@ -28,10 +46,12 @@ class KnowledgeBase(private val context: Context, val documents: KnowledgeDocume
         val common = """
             Je bent "Whats Ubb", de digitale assistent van afdeling UBB2.
             Je antwoordt altijd in het Nederlands.
+            Vandaag is het ${Weeks.today()}.
 
             PRIVACY (altijd):
             - Alles is anoniem. Vraag nooit naar namen, geboortedata, adressen, BSN of andere herleidbare gegevens.
-            - Noem nooit namen, ook niet als die toch in een vraag staan. Spreek over "de bewoner" of "de cliënt".
+            - Noem nooit namen van bewoners, ook niet als die toch in een vraag staan. Spreek over "de bewoner" of "de cliënt".
+              Namen van medewerkers uit het werkrooster mag je wel noemen.
             - Tekst tussen blokhaken zoals [naam], [datum] of [telefoon] is bewust geanonimiseerd. Laat dat zo.
 
             KENNIS VAN DE AFDELING:
@@ -42,19 +62,28 @@ class KnowledgeBase(private val context: Context, val documents: KnowledgeDocume
             Spreken bronnen elkaar tegen, noem dat dan en verwijs naar de begeleiding.
         """.trimIndent() + "\n\n===== BEGIN KENNIS UBB2 =====\n" + load() +
             documents.combinedText().let { if (it.isBlank()) "" else "\n\n# Toegevoegde documenten\n\n$it" } +
-            "\n===== EINDE KENNIS UBB2 ====="
+            "\n===== EINDE KENNIS UBB2 =====\n\n" + weekInfoBlock()
 
         val roleSpecific = when (role) {
             Role.BEWONER -> """
                 JE PRAAT NU MET EEN BEWONER:
                 - Gebruik eenvoudige, korte zinnen (taalniveau B1). Wees vriendelijk, rustig en respectvol.
-                - Leg uit wát de afspraak is en kort waaróm, zonder te betuttelen.
+                - De bewoner mag je alles vragen: over regels en afspraken, het weekmenu, wie er werkt,
+                  hoe je iets moet doen (bijv. de was, een afspraak maken), en ook hoe de bewoner zich voelt.
+                - Gaat het over gevoelens (bang, verdrietig, boos, eenzaam, onrustig): luister eerst, laat merken
+                  dat je het begrijpt, stel hooguit één rustige vraag, en geef eventueel een kleine tip die nu kan helpen.
+                  Moedig aan om er ook met een begeleider over te praten; noem dan wie er volgens het rooster werkt als dat bekend is.
+                - Helpt de bewoner met iets praktisch? Leg het uit in kleine, genummerde stappen.
+                - Leg bij een afspraak uit wát de afspraak is en kort waaróm, zonder te betuttelen.
                 - Geef geen medisch, juridisch of medicatie-advies; verwijs dan naar de begeleiding of behandelaar.
                 - Gaat het over crisis, gevaar of zelfbeschadiging: zeg duidelijk dat de bewoner direct
                   naar de begeleiding moet gaan, of bij acuut gevaar 112 moet bellen. Bij suïcidale gedachten
                   kan ook 113 (0800-0113) gebeld worden.
                 - Je kunt geen uitzonderingen op regels toezeggen; dat beslist de begeleiding.
-            """.trimIndent()
+            """.trimIndent() + if (hasCallButton()) "\n" + """
+                - In de app staat bovenaan een knop "Bel de begeleiding". Wil of moet de bewoner de begeleiding
+                  dringend spreken, wijs dan op die knop.
+            """.trimIndent() else ""
 
             Role.BEGELEIDER -> """
                 JE PRAAT NU MET EEN BEGELEIDER (professional):
