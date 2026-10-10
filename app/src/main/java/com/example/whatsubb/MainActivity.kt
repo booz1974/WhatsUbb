@@ -66,6 +66,7 @@ private sealed interface Screen {
     data object BegeleiderChat : Screen
     data class Document(val type: DocumentType) : Screen
     data object Settings : Screen
+    data object WeekInfo : Screen
 }
 
 @Composable
@@ -98,7 +99,7 @@ fun MainScreen(services: AppServices) {
     // Terug-knop: binnen het begeleidersdeel terug naar het menu, anders uitloggen.
     BackHandler(enabled = screen != Screen.Login) {
         screen = when (screen) {
-            is Screen.Document, Screen.Settings, Screen.BegeleiderChat -> Screen.BegeleiderHome
+            is Screen.Document, Screen.Settings, Screen.WeekInfo, Screen.BegeleiderChat -> Screen.BegeleiderHome
             else -> Screen.Login
         }
     }
@@ -117,6 +118,7 @@ fun MainScreen(services: AppServices) {
             apiKeyMissing = services.settings.apiKey.isBlank(),
             onOpenChat = { screen = Screen.BegeleiderChat },
             onOpenDocument = { screen = Screen.Document(it) },
+            onOpenWeekInfo = { screen = Screen.WeekInfo },
             onOpenSettings = { askAdminPin = true },
             onLogout = { screen = Screen.Login }
         )
@@ -128,5 +130,6 @@ fun MainScreen(services: AppServices) {
         )
         is Screen.Document -> DocumentScreen(services, current.type) { screen = Screen.BegeleiderHome }
         Screen.Settings -> SettingsScreen(services) { screen = Screen.BegeleiderHome }
+        Screen.WeekInfo -> WeekInfoScreen(services) { screen = Screen.BegeleiderHome }
     }
 }

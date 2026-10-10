@@ -24,6 +24,7 @@ fun BegeleiderHomeScreen(
     apiKeyMissing: Boolean,
     onOpenChat: () -> Unit,
     onOpenDocument: (DocumentType) -> Unit,
+    onOpenWeekInfo: () -> Unit,
     onOpenSettings: () -> Unit,
     onLogout: () -> Unit
 ) {
@@ -74,7 +75,20 @@ fun BegeleiderHomeScreen(
                     onClick = onOpenChat
                 )
             }
-            items(documentTypes) { type ->
+            // Weekinfo staat op de plek van Incidentmelding; die schuift één plek op.
+            val incidentIndex = documentTypes.indexOfFirst { it.id == "incident" }.coerceAtLeast(0)
+            items(documentTypes.take(incidentIndex)) { type ->
+                Tile(type.emoji, type.title, type.description, onClick = { onOpenDocument(type) })
+            }
+            item {
+                Tile(
+                    emoji = "🗓️",
+                    title = "Weekinfo",
+                    description = "Foto van weekmenu en werkrooster, zodat bewoners ernaar kunnen vragen",
+                    onClick = onOpenWeekInfo
+                )
+            }
+            items(documentTypes.drop(incidentIndex)) { type ->
                 Tile(type.emoji, type.title, type.description, onClick = { onOpenDocument(type) })
             }
             item(span = { GridItemSpan(maxLineSpan) }) {

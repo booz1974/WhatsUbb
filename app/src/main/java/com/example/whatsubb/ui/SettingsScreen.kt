@@ -77,10 +77,6 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
                 ) { Text("Opslaan") }
             }
 
-            Section("🗓️ Weekinfo: weekmenu en werkrooster") {
-                WeekInfoSection(services)
-            }
-
             Section("📎 Documenten: regels, afspraken, werkwijze") {
                 DocumentsSection(services)
             }
