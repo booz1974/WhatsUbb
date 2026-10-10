@@ -17,6 +17,7 @@ import com.example.whatsubb.data.AppSettings
 import com.example.whatsubb.data.DocumentType
 import com.example.whatsubb.data.KnowledgeBase
 import com.example.whatsubb.data.KnowledgeDocuments
+import com.example.whatsubb.data.DeviceStore
 import com.example.whatsubb.data.WeekInfoStore
 import com.example.whatsubb.data.Role
 import com.example.whatsubb.ui.*
@@ -26,7 +27,7 @@ import com.example.whatsubb.ui.theme.*
 class AppServices(context: Context) {
     val settings = AppSettings(context)
     val knowledgeBase = KnowledgeBase(
-        context, KnowledgeDocuments(context), WeekInfoStore(context),
+        context, KnowledgeDocuments(context), WeekInfoStore(context), DeviceStore(context),
         callButtonLabel = { settings.currentCallTarget()?.label }
     )
 

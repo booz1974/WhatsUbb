@@ -15,6 +15,7 @@ class KnowledgeBase(
     private val context: Context,
     val documents: KnowledgeDocuments,
     val weekInfo: WeekInfoStore,
+    val devices: DeviceStore,
     /** Tekst op de bel-knop die bewoners nu zien, of null als er geen knop is. */
     private val callButtonLabel: () -> String? = { null }
 ) {
@@ -37,6 +38,18 @@ class KnowledgeBase(
         return "$intro\n\n===== BEGIN WEEKINFO =====\n" +
             info.ifBlank { "(Er is op dit moment geen actuele weekinfo.)" } +
             "\n===== EINDE WEEKINFO ====="
+    }
+
+    private fun devicesBlock(): String {
+        val info = devices.promptText()
+        if (info.isBlank()) return ""
+        val intro = """
+            APPARATEN OP DE AFDELING (uitgelezen van foto's van de apparaten zelf):
+            Vraagt iemand hoe een apparaat werkt, gebruik dan deze beschrijving: noem de knoppen en standen zoals ze
+            op dit apparaat staan en leg het uit in korte, genummerde stappen. Weet je iets niet zeker, of staat het
+            apparaat er niet bij, zeg dat dan en verwijs naar de begeleiding.
+        """.trimIndent()
+        return "\n\n$intro\n\n===== BEGIN APPARATEN =====\n$info\n===== EINDE APPARATEN ====="
     }
 
     fun load(): String =
@@ -82,7 +95,7 @@ class KnowledgeBase(
             Spreken bronnen elkaar tegen, noem dat dan en verwijs naar de begeleiding.
         """.trimIndent() + "\n\n===== BEGIN KENNIS UBB2 =====\n" + load() +
             documents.combinedText().let { if (it.isBlank()) "" else "\n\n# Toegevoegde documenten\n\n$it" } +
-            "\n===== EINDE KENNIS UBB2 =====\n\n" + weekInfoBlock()
+            "\n===== EINDE KENNIS UBB2 =====\n\n" + weekInfoBlock() + devicesBlock()
 
         val roleSpecific = when (role) {
             Role.BEWONER -> """

@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img alt="Versie" src="https://img.shields.io/badge/versie-1.2-5B8276">
+  <img alt="Versie" src="https://img.shields.io/badge/versie-1.3-5B8276">
   <img alt="Android" src="https://img.shields.io/badge/Android-7.0%2B-5B8276?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-Jetpack%20Compose-DDA77A?logo=kotlin&logoColor=white">
   <img alt="AI" src="https://img.shields.io/badge/AI-Google%20Gemini-2C3E35?logo=googlegemini&logoColor=white">
@@ -47,7 +47,7 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 
 | | |
 |---|---|
-| 💬 **Vraag alles** | Chat in eenvoudige taal (B1) over regels, afspraken, het weekmenu, het rooster, praktische dingen en gevoelens |
+| 💬 **Vraag alles** | Chat in eenvoudige taal (B1) over regels, afspraken, het weekmenu, het rooster, apparaten op de afdeling, praktische dingen en gevoelens |
 | 🎙️ **Spraak** | Microfoonknop in het invoerveld: inspreken in plaats van typen |
 | 👆 **Voorbeeldvragen** | Aanklikbare vragen zoals *"Wat eten we vanavond?"* en *"Ik voel me niet zo goed"* |
 | 📞 **Bel-knop** | Eén tik om de begeleiding te bellen; tussen 23:00 en 08:00 de bereikbare dienst (met controlevraag) |
@@ -73,6 +73,7 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 |---|---|
 | 🧠 **AI-rol** | De persoonlijkheid van de AI: gedragswetenschapper, doelgroep, methodieken (Verbindend Gezag & Geweldloos Verzet, Geef me de Vijf) en aanwezigheidstijden |
 | 📎 **Documenten** | Regels, afspraken en werkwijze uploaden als PDF, Word (.docx) of tekst |
+| 🔌 **Apparaten** | Foto van de wasmachine, droger, het koffieapparaat of de kookplaat: de AI leest de knoppen en programma's uit, zodat bewoners stap voor stap uitleg krijgen over precies dat apparaat (alleen de tekst wordt bewaard) |
 | 📚 **Kennisbank** | Vrije tekst met de afspraken en informatie over de afdeling |
 | 📞 **Telefoonnummers** | 06-nummer van de begeleiding en nummer van de bereikbare dienst |
 | 🔑 **Toegang** | Bewonerscode (optioneel), begeleider-PIN, beheerders-PIN, AI-sleutel en model |
@@ -151,6 +152,7 @@ Kies één van beide:
 2. Open **⚙️ Beheer** en stel de beheerders-PIN in.
 3. Vul de **AI-sleutel**, de **kennisbank**, de **telefoonnummers** en eventueel **documenten** in.
 4. Zet via **🗓️ Weekinfo** het weekmenu en rooster van deze week klaar.
+5. Voeg in **⚙️ Beheer** bij **🔌 Apparaten** foto's toe van de wasmachine, droger, het koffieapparaat en andere apparaten.
 
 ---
 
@@ -165,7 +167,7 @@ app/src/main/
     ├── MainActivity.kt        navigatie en AppServices
     ├── ai/                    GeminiClient: chat, Files API (audio, PDF, foto's)
     ├── audio/                 opnemen van gesprekken (AAC)
-    ├── data/                  instellingen, kennisbank, documenten, weekinfo, documenttypes
+    ├── data/                  instellingen, kennisbank, documenten, weekinfo, apparaten, documenttypes
     ├── privacy/               Anonymizer
     ├── ui/                    Compose-schermen
     └── util/                  PDF-export, Markdown, documentimport, foto's, weken

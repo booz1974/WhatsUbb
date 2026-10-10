@@ -127,6 +127,10 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
                 DocumentsSection(services)
             }
 
+            Section("🔌 Apparaten: wasmachine, droger, koffie...") {
+                DevicesSection(services)
+            }
+
             Section("📚 Kennisbank UBB2") {
                 Text(
                     "Dit is wat de AI weet over de afdeling: afspraken, regels en de doelgroep. " +
