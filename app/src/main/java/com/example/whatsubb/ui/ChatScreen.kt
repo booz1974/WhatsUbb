@@ -260,7 +260,7 @@ fun ChatScreen(
                         onClick = { onContactButton(ContactAction.CALL) }, modifier = Modifier.weight(1f)
                     )
                     ContactButton(
-                        emoji = "💬", verb = "Chat met", name = target.name, color = WhatsAppGreen,
+                        emoji = "💬", verb = "Chat met", name = target.name, color = SagePrimary,
                         onClick = { onContactButton(ContactAction.CHAT) }, modifier = Modifier.weight(1f)
                     )
                 }
@@ -402,8 +402,6 @@ fun ChatScreen(
 }
 
 private enum class ContactAction { CALL, CHAT }
-
-private val WhatsAppGreen = Color(0xFF25D366)
 
 /** Knop om de begeleiding of bereikbare dienst te bellen of te appen, bijv. "📞 Bel / de begeleiding". */
 @Composable
