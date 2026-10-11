@@ -10,6 +10,7 @@ import android.speech.RecognizerIntent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,11 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.whatsubb.AppServices
+import com.example.whatsubb.R
 import com.example.whatsubb.ai.AiException
 import com.example.whatsubb.ai.Turn
 import com.example.whatsubb.data.KnowledgeBase
@@ -260,7 +263,7 @@ fun ChatScreen(
                         onClick = { onContactButton(ContactAction.CALL) }, modifier = Modifier.weight(1f)
                     )
                     ContactButton(
-                        emoji = "💬", verb = "Chat met", name = target.name, color = SagePrimary,
+                        icon = R.drawable.ic_whatsapp, verb = "Chat met", name = target.name, color = SagePrimary,
                         onClick = { onContactButton(ContactAction.CHAT) }, modifier = Modifier.weight(1f)
                     )
                 }
@@ -403,10 +406,14 @@ fun ChatScreen(
 
 private enum class ContactAction { CALL, CHAT }
 
-/** Knop om de begeleiding of bereikbare dienst te bellen of te appen, bijv. "📞 Bel / de begeleiding". */
+/**
+ * Knop om de begeleiding of bereikbare dienst te bellen of te appen, bijv. "📞 Bel / de begeleiding".
+ * Met [icon] staat er een afbeelding (zoals het WhatsApp-logo) in plaats van de [emoji].
+ */
 @Composable
 private fun ContactButton(
-    emoji: String,
+    emoji: String = "",
+    @DrawableRes icon: Int? = null,
     verb: String,
     name: String,
     color: Color,
@@ -421,7 +428,13 @@ private fun ContactButton(
         modifier = modifier.height(60.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("$emoji  $verb", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White, maxLines = 1)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (icon != null) {
+                    Icon(painterResource(icon), contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                }
+                Text(if (icon != null) verb else "$emoji  $verb", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White, maxLines = 1)
+            }
             Text(name, fontSize = 12.sp, color = Color.White, maxLines = 1, textAlign = TextAlign.Center)
         }
     }
