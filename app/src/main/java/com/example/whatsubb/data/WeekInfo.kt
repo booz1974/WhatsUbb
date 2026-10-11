@@ -69,6 +69,12 @@ class WeekInfoStore(context: Context) {
     fun delete(type: WeekInfoType, weekStart: Long) =
         writeAll(current().filterNot { it.type == type && it.weekStart == weekStart })
 
+    /** Welke soorten weekinfo (menu, rooster) er voor de huidige week (ma t/m zo) nog ontbreken. */
+    fun missingThisWeek(now: Long = System.currentTimeMillis()): List<WeekInfoType> {
+        val thisWeek = current(now).filter { it.weekStart <= now }.map { it.type }.toSet()
+        return WeekInfoType.entries.filterNot { it in thisWeek }
+    }
+
     /** Tekst voor de AI, met per blok de week waarvoor het geldt. */
     fun promptText(now: Long = System.currentTimeMillis()): String =
         current(now).joinToString("\n\n") { entry ->

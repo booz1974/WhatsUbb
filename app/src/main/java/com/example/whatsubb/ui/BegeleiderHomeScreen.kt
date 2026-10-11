@@ -16,12 +16,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.whatsubb.data.DocumentType
+import com.example.whatsubb.data.WeekInfoType
 import com.example.whatsubb.data.documentTypes
 import com.example.whatsubb.ui.theme.*
+import com.example.whatsubb.util.Weeks
 
 @Composable
 fun BegeleiderHomeScreen(
     apiKeyMissing: Boolean,
+    missingWeekInfo: List<WeekInfoType>,
     onOpenChat: () -> Unit,
     onOpenDocument: (DocumentType) -> Unit,
     onOpenWeekInfo: () -> Unit,
@@ -66,6 +69,22 @@ fun BegeleiderHomeScreen(
                     }
                 }
             }
+            if (missingWeekInfo.isNotEmpty()) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Surface(
+                        color = Color(0xFFFFF1E6),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.clickable(onClick = onOpenWeekInfo)
+                    ) {
+                        Text(
+                            text = "🗓️ ${missingWeekInfoText(missingWeekInfo)} Tik hier om de foto toe te voegen.",
+                            fontSize = 14.sp,
+                            color = TextDark,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+            }
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Tile(
                     emoji = "💬",
@@ -101,6 +120,34 @@ fun BegeleiderHomeScreen(
             }
         }
     }
+}
+
+/** Bijv. "Het weekmenu en werkrooster voor deze week (12 t/m 18 oktober) zijn nog niet toegevoegd." */
+private fun missingWeekInfoText(missing: List<WeekInfoType>): String {
+    val names = missing.joinToString(" en ") { it.title.lowercase() }
+    val verb = if (missing.size > 1) "zijn" else "is"
+    return "Het $names voor deze week (${Weeks.label(Weeks.start())}) $verb nog niet toegevoegd."
+}
+
+/** Melding na inloggen als de foto's van deze week nog ontbreken. */
+@Composable
+fun WeekReminderDialog(missing: List<WeekInfoType>, onAdd: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("🗓️ Weekinfo ontbreekt") },
+        text = {
+            Text(
+                missingWeekInfoText(missing) + " Maak een foto, zodat bewoners kunnen vragen wat we eten en wie er werkt.",
+                lineHeight = 20.sp
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = onAdd) { Text("Nu toevoegen", color = SagePrimary, fontWeight = FontWeight.SemiBold) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Later") }
+        }
+    )
 }
 
 @Composable

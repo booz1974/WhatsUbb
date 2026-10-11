@@ -2,4 +2,6 @@
 <paths>
     <!-- Tijdelijke foto's van weekmenu en rooster (worden direct na uitlezen gewist) -->
     <cache-path name="photos" path="photos/" />
+    <!-- Tijdelijke PDF's om te delen (worden bij de volgende keer delen en bij het starten gewist) -->
+    <cache-path name="pdf" path="pdf/" />
 </paths>

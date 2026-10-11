@@ -8,7 +8,10 @@ import java.security.MessageDigest
  * Lokale instellingen van de app. Er worden hier GEEN persoonsgegevens opgeslagen,
  * alleen technische instellingen en (gehashte) toegangscodes.
  */
-data class CallTarget(val label: String, val phone: String, val confirmFirst: Boolean)
+data class CallTarget(val name: String, val phone: String, val confirmFirst: Boolean) {
+    val label get() = "Bel $name"
+    val chatLabel get() = "Chat met $name"
+}
 
 class AppSettings(context: Context) {
 
@@ -39,9 +42,9 @@ class AppSettings(context: Context) {
         val night = hour >= 23 || hour < 8
         return when {
             night && bereikbareDienstPhone.isNotBlank() ->
-                CallTarget("Bel de bereikbare dienst", bereikbareDienstPhone, confirmFirst = true)
+                CallTarget("de bereikbare dienst", bereikbareDienstPhone, confirmFirst = true)
             !night && begeleidingPhone.isNotBlank() ->
-                CallTarget("Bel de begeleiding", begeleidingPhone, confirmFirst = false)
+                CallTarget("de begeleiding", begeleidingPhone, confirmFirst = false)
             else -> null
         }
     }

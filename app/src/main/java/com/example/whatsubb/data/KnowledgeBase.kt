@@ -16,14 +16,14 @@ class KnowledgeBase(
     val documents: KnowledgeDocuments,
     val weekInfo: WeekInfoStore,
     val devices: DeviceStore,
-    /** Tekst op de bel-knop die bewoners nu zien, of null als er geen knop is. */
-    private val callButtonLabel: () -> String? = { null }
+    /** Wie de bel- en chatknop bij bewoners nu bereiken (bijv. "de begeleiding"), of null als er geen knoppen zijn. */
+    private val contactName: () -> String? = { null }
 ) {
 
     private fun callButtonHint(): String {
-        val label = callButtonLabel() ?: return ""
-        return "\n- In de app staat bovenaan een knop \"$label\". Moet de bewoner iemand dringend spreken, " +
-            "wijs dan op die knop."
+        val name = contactName() ?: return ""
+        return "\n- In de app staan bovenaan de knoppen \"Bel $name\" en \"Chat met $name\" (via WhatsApp). " +
+            "Moet de bewoner iemand dringend spreken, wijs dan op die knoppen."
     }
 
     private val overrideFile = File(context.filesDir, "ubb2_kennis.md")

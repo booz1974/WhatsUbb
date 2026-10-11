@@ -1,6 +1,7 @@
 package com.example.whatsubb.util
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Paint
@@ -14,7 +15,9 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.StyleSpan
+import androidx.core.content.FileProvider
 import com.example.whatsubb.R
+import java.io.File
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -32,7 +35,33 @@ object PdfExporter {
     private val textColor = Color.rgb(0x2C, 0x3E, 0x35)
     private val accentColor = Color.rgb(0x5B, 0x82, 0x76)
 
-    fun write(context: Context, out: OutputStream, title: String, markdown: String) {
+    const val FOOTER_DOCUMENT = "Whats Ubb  ·  Opgesteld met AI, gecontroleerd door de begeleider"
+    const val FOOTER_ANSWER = "Whats Ubb  ·  Antwoord gemaakt met AI. Twijfel je? Vraag het aan de begeleiding."
+
+    /** Map voor PDF's die gedeeld worden (via de FileProvider). */
+    private fun shareDir(context: Context) = File(context.cacheDir, "pdf")
+
+    /** Wist eerder gedeelde PDF's, zodat er geen gesprekken op het toestel blijven staan. */
+    fun clearShared(context: Context) {
+        shareDir(context).listFiles()?.forEach { it.delete() }
+    }
+
+    /** Maakt een tijdelijke PDF en opent het deel-menu van Android. */
+    fun share(context: Context, fileName: String, title: String, markdown: String, footer: String = FOOTER_DOCUMENT) {
+        clearShared(context)
+        val file = File(shareDir(context).apply { mkdirs() }, fileName)
+        file.outputStream().use { write(context, it, title, markdown, footer) }
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_SUBJECT, title)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(Intent.createChooser(intent, "PDF delen via"))
+    }
+
+    fun write(context: Context, out: OutputStream, title: String, markdown: String, footer: String = FOOTER_DOCUMENT) {
         val contentWidth = (PAGE_WIDTH - 2 * MARGIN).toInt()
         val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 11f; color = textColor }
         val body = buildBody(markdown)
@@ -72,7 +101,7 @@ object PdfExporter {
                 line = end
             }
 
-            drawFooter(canvas, pageNumber)
+            drawFooter(canvas, pageNumber, footer)
             document.finishPage(page)
             pageNumber++
         } while (line < layout.lineCount)
@@ -99,10 +128,10 @@ object PdfExporter {
         })
     }
 
-    private fun drawFooter(canvas: android.graphics.Canvas, pageNumber: Int) {
+    private fun drawFooter(canvas: android.graphics.Canvas, pageNumber: Int, footer: String) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 8f; color = Color.GRAY }
         val y = PAGE_HEIGHT - FOOTER_SPACE / 2
-        canvas.drawText("Whats Ubb  ·  Opgesteld met AI, gecontroleerd door de begeleider", MARGIN, y, paint)
+        canvas.drawText(footer, MARGIN, y, paint)
         val pageText = "Pagina $pageNumber"
         canvas.drawText(pageText, PAGE_WIDTH - MARGIN - paint.measureText(pageText), y, paint)
     }

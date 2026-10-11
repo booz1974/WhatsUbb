@@ -30,7 +30,9 @@ data class ChatMessage(
     val isUser: Boolean,
     val isError: Boolean = false,
     /** Onder dit antwoord de knoppen naar 113 Zelfmoordpreventie tonen. */
-    val show113: Boolean = false
+    val show113: Boolean = false,
+    /** De vraag waar dit antwoord bij hoort (voor de PDF). */
+    val question: String? = null
 )
 
 /** Bovenbalk met titel en een tekstknop rechts (terug / uitloggen). */

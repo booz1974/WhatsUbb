@@ -37,6 +37,8 @@ import com.example.whatsubb.data.KnowledgeBase
 import com.example.whatsubb.data.Role
 import com.example.whatsubb.privacy.Anonymizer
 import com.example.whatsubb.ui.theme.*
+import com.example.whatsubb.util.PdfExporter
+import com.example.whatsubb.util.Phones
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -94,8 +96,40 @@ fun ChatScreen(
             callTarget = services.settings.currentCallTarget()
         }
     }
-    var confirmNightCall by remember { mutableStateOf(false) }
+    // 's Nachts eerst een controlevraag; dit is de actie (bellen of chatten) die daarna wordt uitgevoerd.
+    var confirmNightAction by remember { mutableStateOf<ContactAction?>(null) }
     var pendingPhone by remember { mutableStateOf<String?>(null) }
+
+    // Antwoord dat als PDF wordt opgeslagen zodra de gebruiker een plek heeft gekozen.
+    var pendingPdf by remember { mutableStateOf<String?>(null) }
+    val pdfLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri ->
+        val markdown = pendingPdf ?: return@rememberLauncherForActivityResult
+        pendingPdf = null
+        if (uri != null) {
+            runCatching {
+                context.contentResolver.openOutputStream(uri)?.use {
+                    PdfExporter.write(context, it, PDF_TITLE, markdown, PdfExporter.FOOTER_ANSWER)
+                }
+            }.onSuccess {
+                Toast.makeText(context, "PDF opgeslagen", Toast.LENGTH_SHORT).show()
+            }.onFailure {
+                Toast.makeText(context, "PDF maken mislukt", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun savePdf(message: ChatMessage) {
+        pendingPdf = answerMarkdown(message)
+        pdfLauncher.launch(answerFileName())
+    }
+
+    fun sharePdf(message: ChatMessage) {
+        runCatching {
+            PdfExporter.share(context, answerFileName(), PDF_TITLE, answerMarkdown(message), PdfExporter.FOOTER_ANSWER)
+        }.onFailure {
+            Toast.makeText(context, "PDF delen mislukt", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     fun call(phone: String, direct: Boolean) {
         val uri = Uri.parse("tel:" + phone.filter { it.isDigit() || it == '+' })
@@ -132,8 +166,23 @@ fun ChatScreen(
         }
     }
 
-    fun onCallButton() {
-        if (callTarget?.confirmFirst == true) confirmNightCall = true else startCall()
+    fun openWhatsApp() {
+        val phone = callTarget?.phone ?: return
+        val uri = Uri.parse("https://wa.me/" + Phones.whatsAppNumber(phone))
+        try {
+            context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(context, "WhatsApp openen lukt niet. Het nummer is $phone", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun runContact(action: ContactAction) = when (action) {
+        ContactAction.CALL -> startCall()
+        ContactAction.CHAT -> openWhatsApp()
+    }
+
+    fun onContactButton(action: ContactAction) {
+        if (callTarget?.confirmFirst == true) confirmNightAction = action else runContact(action)
     }
 
     fun send(text: String = questionText) {
@@ -157,7 +206,7 @@ fun ChatScreen(
                 val answer = reply.replace(KnowledgeBase.HELP_113_MARKER, "").trim()
                 val show113 = role == Role.BEWONER &&
                     (reply.contains(KnowledgeBase.HELP_113_MARKER) || mentions113Topic(query))
-                messages.add(ChatMessage(answer, isUser = false, show113 = show113))
+                messages.add(ChatMessage(answer, isUser = false, show113 = show113, question = query))
                 history.add(Turn(fromUser = false, text = answer))
             } catch (e: AiException) {
                 messages.add(ChatMessage(e.message.orEmpty(), isUser = false, isError = true))
@@ -202,13 +251,18 @@ fun ChatScreen(
 
             val target = callTarget
             if (isBewoner && target != null) {
-                Button(
-                    onClick = ::onCallButton,
-                    shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = PeachAccent),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).height(52.dp)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
                 ) {
-                    Text("📞  ${target.label}", fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                    ContactButton(
+                        emoji = "📞", verb = "Bel", name = target.name, color = PeachAccent,
+                        onClick = { onContactButton(ContactAction.CALL) }, modifier = Modifier.weight(1f)
+                    )
+                    ContactButton(
+                        emoji = "💬", verb = "Chat met", name = target.name, color = WhatsAppGreen,
+                        onClick = { onContactButton(ContactAction.CHAT) }, modifier = Modifier.weight(1f)
+                    )
                 }
                 Spacer(modifier = Modifier.height(if (messages.isEmpty()) 20.dp else 12.dp))
             }
@@ -309,6 +363,9 @@ fun ChatScreen(
                     items(messages) { msg ->
                         Column {
                             ChatBubble(message = msg)
+                            if (!msg.isUser && !msg.isError) {
+                                AnswerPdfActions(onSave = { savePdf(msg) }, onShare = { sharePdf(msg) })
+                            }
                             if (msg.show113) Help113Card(onCall = { startCall(HELP_113_PHONE) }, onChat = ::open113Chat)
                         }
                     }
@@ -318,9 +375,9 @@ fun ChatScreen(
         }
     }
 
-    if (confirmNightCall) {
+    confirmNightAction?.let { action ->
         AlertDialog(
-            onDismissRequest = { confirmNightCall = false },
+            onDismissRequest = { confirmNightAction = null },
             title = { Text("Kan het echt niet wachten tot morgen?") },
             text = {
                 Text(
@@ -330,15 +387,72 @@ fun ChatScreen(
                 )
             },
             confirmButton = {
-                TextButton(onClick = { confirmNightCall = false; startCall() }) {
-                    Text("Ja, bellen", color = SagePrimary, fontWeight = FontWeight.SemiBold)
+                TextButton(onClick = { confirmNightAction = null; runContact(action) }) {
+                    Text(
+                        if (action == ContactAction.CALL) "Ja, bellen" else "Ja, chatten",
+                        color = SagePrimary, fontWeight = FontWeight.SemiBold
+                    )
                 }
             },
             dismissButton = {
-                TextButton(onClick = { confirmNightCall = false }) { Text("Nee, het kan wachten") }
+                TextButton(onClick = { confirmNightAction = null }) { Text("Nee, het kan wachten") }
             }
         )
     }
+}
+
+private enum class ContactAction { CALL, CHAT }
+
+private val WhatsAppGreen = Color(0xFF25D366)
+
+/** Knop om de begeleiding of bereikbare dienst te bellen of te appen, bijv. "📞 Bel / de begeleiding". */
+@Composable
+private fun ContactButton(
+    emoji: String,
+    verb: String,
+    name: String,
+    color: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(20.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = color),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
+        modifier = modifier.height(60.dp)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("$emoji  $verb", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White, maxLines = 1)
+            Text(name, fontSize = 12.sp, color = Color.White, maxLines = 1, textAlign = TextAlign.Center)
+        }
+    }
+}
+
+/** Kleine knoppen onder een antwoord: opslaan of delen als PDF. */
+@Composable
+private fun AnswerPdfActions(onSave: () -> Unit, onShare: () -> Unit) {
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        TextButton(onClick = onSave, contentPadding = PaddingValues(horizontal = 8.dp)) {
+            Text("📄 Opslaan als PDF", fontSize = 13.sp, color = SagePrimary)
+        }
+        TextButton(onClick = onShare, contentPadding = PaddingValues(horizontal = 8.dp)) {
+            Text("📤 Delen als PDF", fontSize = 13.sp, color = SagePrimary)
+        }
+    }
+}
+
+private const val PDF_TITLE = "Antwoord van Whats Ubb"
+
+/** Vraag en antwoord samen, als Markdown voor de PDF. */
+private fun answerMarkdown(message: ChatMessage): String = buildString {
+    message.question?.let { append("## Je vraag\n\n").append(it.trim()).append("\n\n") }
+    append("## Antwoord\n\n").append(message.text.trim())
+}
+
+private fun answerFileName(): String {
+    val stamp = java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm", java.util.Locale.US).format(java.util.Date())
+    return "Whats_Ubb_antwoord_$stamp.pdf"
 }
 
 private const val MAX_TURNS = 20

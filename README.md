@@ -50,7 +50,8 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 | 💬 **Vraag alles** | Chat in eenvoudige taal (B1) over regels, afspraken, het weekmenu, het rooster, apparaten op de afdeling, praktische dingen en gevoelens |
 | 🎙️ **Spraak** | Microfoonknop in het invoerveld: inspreken in plaats van typen |
 | 👆 **Voorbeeldvragen** | Aanklikbare vragen zoals *"Wat eten we vanavond?"* en *"Ik voel me niet zo goed"* |
-| 📞 **Bel-knop** | Eén tik om de begeleiding te bellen; tussen 23:00 en 08:00 de bereikbare dienst (met controlevraag) |
+| 📞 **Bel- en chatknop** | Eén tik om de begeleiding te bellen of via WhatsApp te chatten; tussen 23:00 en 08:00 de bereikbare dienst (met controlevraag) |
+| 📄 **Antwoord als PDF** | Elk antwoord (met de vraag erbij) opslaan als PDF of direct delen als PDF |
 | 🆘 **Veilig** | Bij crisis verwijst de AI naar de begeleiding, de bereikbare dienst, 112 of 113, afhankelijk van het tijdstip |
 | 💚 **113-knoppen** | Gaat het over somberheid of suïcidale gedachten? Dan verschijnen onder het antwoord knoppen om 113 te bellen of te chatten (gratis, anoniem, dag en nacht) |
 
@@ -63,7 +64,7 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 | 🗣️ **Gespreksverslag** | Inclusief **gesprek opnemen** en automatisch laten uitschrijven door Gemini |
 | 🚦 **Signaleringsplan** | Signalen en acties per fase (groen / oranje / rood) |
 | ✨ **Vrije opdracht** | Brief, uitleg, dagprogramma of iets anders |
-| 🗓️ **Weekinfo** | Foto van het weekmenu en werkrooster: de AI leest ze uit zodat bewoners ernaar kunnen vragen |
+| 🗓️ **Weekinfo** | Foto van het weekmenu en werkrooster: de AI leest ze uit zodat bewoners ernaar kunnen vragen. Ontbreekt die voor de huidige week (ma t/m zo), dan krijg je bij het inloggen een melding |
 | 💬 **Vraag over afspraken** | Chat over regels, afspraken en de doelgroep |
 | 📄 **PDF** | Elk document als A4-PDF met logo, datum en paginanummers; ook kopiëren en delen |
 
@@ -108,7 +109,8 @@ in plaats van regels te verzinnen.
 
 - **Anonimiseren vóór verzending**: telefoonnummers, e-mailadressen, data, adressen, postcodes, BSN, IBAN en
   opgegeven namen worden vervangen door `[naam]`, `[datum]` enz.
-- **Niets bewaren**: gesprekken en gemaakte documenten worden niet opgeslagen; na uitloggen is alles weg.
+- **Niets bewaren**: gesprekken en gemaakte documenten worden niet opgeslagen; na uitloggen is alles weg. Gedeelde
+  PDF's worden bij de volgende keer delen en bij het starten van de app gewist.
 - **Opnames**: alleen na een toestemmingsvinkje; na het uitschrijven direct bij Google verwijderd en van het toestel
   gewist zodra het scherm wordt verlaten (tenzij zelf opgeslagen).
 - **Foto's** van weekmenu en rooster: alleen de uitgelezen tekst wordt bewaard, nooit de foto. Verlopen weken worden

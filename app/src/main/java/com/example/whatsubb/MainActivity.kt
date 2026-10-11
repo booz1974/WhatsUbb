@@ -19,21 +19,25 @@ import com.example.whatsubb.data.KnowledgeBase
 import com.example.whatsubb.data.KnowledgeDocuments
 import com.example.whatsubb.data.DeviceStore
 import com.example.whatsubb.data.WeekInfoStore
+import com.example.whatsubb.data.WeekInfoType
 import com.example.whatsubb.data.Role
 import com.example.whatsubb.ui.*
 import com.example.whatsubb.ui.theme.*
+import com.example.whatsubb.util.PdfExporter
 
 /** Simpele "container" met alles wat de schermen nodig hebben. */
 class AppServices(context: Context) {
     val settings = AppSettings(context)
     val knowledgeBase = KnowledgeBase(
         context, KnowledgeDocuments(context), WeekInfoStore(context), DeviceStore(context),
-        callButtonLabel = { settings.currentCallTarget()?.label }
+        contactName = { settings.currentCallTarget()?.name }
     )
 
     init {
         // Opnames die achtergebleven zijn (bijv. na een crash) direct wissen.
         AudioRecorder.deleteAll(context)
+        // Eerder gedeelde PDF's (met vragen en antwoorden) ook.
+        PdfExporter.clearShared(context)
         // Verlopen weekmenu's en roosters opruimen.
         knowledgeBase.weekInfo.current()
     }
@@ -74,6 +78,16 @@ private sealed interface Screen {
 fun MainScreen(services: AppServices) {
     var screen by remember { mutableStateOf<Screen>(Screen.Login) }
     var askAdminPin by remember { mutableStateOf(false) }
+    // Na inloggen als begeleider: melding als de weekinfo van deze week nog ontbreekt.
+    var weekReminder by remember { mutableStateOf<List<WeekInfoType>>(emptyList()) }
+
+    if (weekReminder.isNotEmpty()) {
+        WeekReminderDialog(
+            missing = weekReminder,
+            onAdd = { weekReminder = emptyList(); screen = Screen.WeekInfo },
+            onDismiss = { weekReminder = emptyList() }
+        )
+    }
 
     // Beheer (kennisbank, documenten, sleutel, codes) zit achter een aparte beheerders-PIN.
     if (askAdminPin) {
@@ -108,6 +122,7 @@ fun MainScreen(services: AppServices) {
     when (val current = screen) {
         Screen.Login -> LoginScreen(services.settings) { role ->
             screen = if (role == Role.BEWONER) Screen.BewonerChat else Screen.BegeleiderHome
+            if (role == Role.BEGELEIDER) weekReminder = services.knowledgeBase.weekInfo.missingThisWeek()
         }
         Screen.BewonerChat -> ChatScreen(
             services = services,
@@ -117,6 +132,7 @@ fun MainScreen(services: AppServices) {
         )
         Screen.BegeleiderHome -> BegeleiderHomeScreen(
             apiKeyMissing = services.settings.apiKey.isBlank(),
+            missingWeekInfo = services.knowledgeBase.weekInfo.missingThisWeek(),
             onOpenChat = { screen = Screen.BegeleiderChat },
             onOpenDocument = { screen = Screen.Document(it) },
             onOpenWeekInfo = { screen = Screen.WeekInfo },

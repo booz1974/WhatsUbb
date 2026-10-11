@@ -87,10 +87,11 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
                 }
             }
 
-            Section("📞 Bel-knop voor bewoners") {
+            Section("📞 Bel- en chatknop voor bewoners") {
                 Text(
-                    "Vul het 06-nummer van de begeleiding in. Bewoners zien dan een knop waarmee ze met één tik bellen. " +
-                        "Tussen 23:00 en 08:00 belt de knop de bereikbare dienst (als dat nummer is ingevuld). " +
+                    "Vul het 06-nummer van de begeleiding in. Bewoners zien dan knoppen waarmee ze met één tik bellen " +
+                        "of een WhatsApp-chat openen met dat nummer. " +
+                        "Tussen 23:00 en 08:00 gaan de knoppen naar de bereikbare dienst (als dat nummer is ingevuld). " +
                         "Laat leeg om de knop te verbergen.",
                     fontSize = 13.sp, color = TextDark.copy(alpha = 0.75f)
                 )
@@ -107,7 +108,7 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
                     value = nightPhone,
                     onValueChange = { nightPhone = it.filter { c -> c.isDigit() || c in "+ -" } },
                     label = { Text("Bereikbare dienst (23:00 - 08:00)") },
-                    supportingText = { Text("'s Nachts belt de knop dit nummer, na een controlevraag") },
+                    supportingText = { Text("'s Nachts bellen of appen de knoppen dit nummer, na een controlevraag") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     modifier = Modifier.fillMaxWidth()
