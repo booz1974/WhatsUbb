@@ -68,6 +68,14 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 | 💬 **Vraag over afspraken** | Chat over regels, afspraken en de doelgroep |
 | 📄 **PDF** | Elk document als A4-PDF met logo, datum en paginanummers; ook kopiëren en delen |
 
+<p align="center">
+  <img src="docs/screenshots/begeleider-menu.png" alt="Menu voor begeleiders, met melding over ontbrekende weekinfo" width="230">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/weekinfo.png" alt="Weekinfo: foto van weekmenu en werkrooster" width="230">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/gespreksverslag.png" alt="Gespreksverslag met gesprek opnemen" width="230">
+</p>
+
 ### ⚙️ Voor de beheerder (aparte beheerders-PIN)
 
 | | |
