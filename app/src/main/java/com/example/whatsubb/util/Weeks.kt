@@ -34,6 +34,9 @@ object Weeks {
         return "$first t/m ${SimpleDateFormat("d MMMM", dutch).format(last.time)}"
     }
 
+    fun isSunday(now: Long = System.currentTimeMillis()): Boolean =
+        Calendar.getInstance().apply { timeInMillis = now }.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+
     fun today(now: Long = System.currentTimeMillis()): String =
         SimpleDateFormat("EEEE d MMMM yyyy, 'het is nu' HH:mm 'uur'", dutch).format(Date(now))
 }

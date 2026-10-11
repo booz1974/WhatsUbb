@@ -44,6 +44,20 @@ data class WeekInfoEntry(
     val addedAt: Long
 )
 
+/** Ontbrekende weekinfo; [weekOffset] 0 = deze week, 1 = volgende week. */
+data class WeekReminder(val weekOffset: Int, val weekStart: Long, val missing: List<WeekInfoType>) {
+    val isNextWeek get() = weekOffset == 1
+
+    /** Bijv. "Het weekmenu en werkrooster voor volgende week (12 t/m 18 oktober) zijn nog niet toegevoegd." */
+    val text: String
+        get() {
+            val names = missing.joinToString(" en ") { it.title.lowercase() }
+            val verb = if (missing.size > 1) "zijn" else "is"
+            val week = if (isNextWeek) "volgende week" else "deze week"
+            return "Het $names voor $week (${Weeks.label(weekStart)}) $verb nog niet toegevoegd."
+        }
+}
+
 /**
  * Weekmenu en werkrooster, per week. Alleen de uitgelezen tekst wordt bewaard (niet de foto).
  * Info van een week die voorbij is wordt automatisch verwijderd.
@@ -69,10 +83,21 @@ class WeekInfoStore(context: Context) {
     fun delete(type: WeekInfoType, weekStart: Long) =
         writeAll(current().filterNot { it.type == type && it.weekStart == weekStart })
 
-    /** Welke soorten weekinfo (menu, rooster) er voor de huidige week (ma t/m zo) nog ontbreken. */
-    fun missingThisWeek(now: Long = System.currentTimeMillis()): List<WeekInfoType> {
-        val thisWeek = current(now).filter { it.weekStart <= now }.map { it.type }.toSet()
-        return WeekInfoType.entries.filterNot { it in thisWeek }
+    /** Herinnering voor begeleiders als er weekinfo ontbreekt, of null als alles er is. */
+    fun reminder(now: Long = System.currentTimeMillis()): WeekReminder? = reminderFor(current(now), now)
+
+    companion object {
+        /**
+         * Maandag t/m zaterdag: ontbreekt er iets voor deze week (ma t/m zo)?
+         * Zondag: ontbreekt er iets voor de week die morgen begint?
+         */
+        fun reminderFor(entries: List<WeekInfoEntry>, now: Long): WeekReminder? {
+            val offset = if (Weeks.isSunday(now)) 1 else 0
+            val weekStart = Weeks.start(offset, now)
+            val present = entries.filter { it.weekStart <= weekStart && it.weekEnd > weekStart }.map { it.type }.toSet()
+            val missing = WeekInfoType.entries.filterNot { it in present }
+            return if (missing.isEmpty()) null else WeekReminder(offset, weekStart, missing)
+        }
     }
 
     /** Tekst voor de AI, met per blok de week waarvoor het geldt. */

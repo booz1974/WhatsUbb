@@ -32,12 +32,12 @@ import java.io.File
 
 /** Foto's van het weekmenu en het werkrooster uploaden; verlopen info verdwijnt automatisch. */
 @Composable
-fun WeekInfoSection(services: AppServices) {
+fun WeekInfoSection(services: AppServices, initialWeekOffset: Int = 0) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val store = services.knowledgeBase.weekInfo
     var entries by remember { mutableStateOf(store.current()) }
-    var weekOffset by remember { mutableIntStateOf(0) }
+    var weekOffset by remember { mutableIntStateOf(initialWeekOffset) }
     var pendingType by remember { mutableStateOf<WeekInfoType?>(null) }
     var cameraFile by remember { mutableStateOf<File?>(null) }
     var processing by remember { mutableStateOf<WeekInfoType?>(null) }

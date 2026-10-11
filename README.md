@@ -64,7 +64,7 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 | 🗣️ **Gespreksverslag** | Inclusief **gesprek opnemen** en automatisch laten uitschrijven door Gemini |
 | 🚦 **Signaleringsplan** | Signalen en acties per fase (groen / oranje / rood) |
 | ✨ **Vrije opdracht** | Brief, uitleg, dagprogramma of iets anders |
-| 🗓️ **Weekinfo** | Foto van het weekmenu en werkrooster: de AI leest ze uit zodat bewoners ernaar kunnen vragen. Ontbreekt die voor de huidige week (ma t/m zo), dan krijg je bij het inloggen een melding |
+| 🗓️ **Weekinfo** | Foto van het weekmenu en werkrooster: de AI leest ze uit zodat bewoners ernaar kunnen vragen. Ontbreekt die voor de huidige week (ma t/m zo), dan krijg je bij het inloggen een melding. Op zondag kijkt de app naar de week die morgen begint: ontbreekt daar iets, dan kom je na het inloggen direct in Weekinfo |
 | 💬 **Vraag over afspraken** | Chat over regels, afspraken en de doelgroep |
 | 📄 **PDF** | Elk document als A4-PDF met logo, datum en paginanummers; ook kopiëren en delen |
 
