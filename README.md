@@ -34,7 +34,7 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 <p align="center">
   <img src="docs/screenshots/inloggen.png" alt="Inlogscherm" width="230">
   &nbsp;&nbsp;
-  <img src="docs/screenshots/bewoner-welkom.png" alt="Welkomstscherm bewoner" width="230">
+  <img src="docs/screenshots/bewoner-welkom.png" alt="Welkomstscherm bewoner, met knoppen om de begeleiding te bellen of via WhatsApp te chatten" width="230">
   &nbsp;&nbsp;
   <img src="docs/screenshots/bewoner-chat.png" alt="Chat met de AI, met de 113-knoppen" width="230">
 </p>
