@@ -30,6 +30,7 @@ import com.example.whatsubb.data.Werkplan
 import com.example.whatsubb.privacy.Anonymizer
 import com.example.whatsubb.ui.theme.*
 import com.example.whatsubb.util.PdfExporter
+import com.example.whatsubb.util.WerkplanDocx
 import com.example.whatsubb.util.WerkplanPdf
 import kotlinx.coroutines.launch
 
@@ -246,6 +247,18 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
                                 shape = CircleShape,
                                 modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
                             ) { Text("📤  Delen als PDF", color = SagePrimary) }
+                            OutlinedButton(
+                                onClick = {
+                                    val name = pdfFileName("Werkplan ${werkplan.taak}").removeSuffix(".pdf") + ".docx"
+                                    runCatching {
+                                        PdfExporter.share(context, name, "Werkplan ${werkplan.taak}", WerkplanDocx.MIME_TYPE) {
+                                            WerkplanDocx.write(context, it, werkplan)
+                                        }
+                                    }.onFailure { Toast.makeText(context, "Word-document maken mislukt", Toast.LENGTH_SHORT).show() }
+                                },
+                                shape = CircleShape,
+                                modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
+                            ) { Text("📝  Delen als Word-document", color = SagePrimary) }
                         } else {
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 4.dp)) {
                                 OutlinedButton(onClick = { copyToClipboard(context, text) }, shape = CircleShape) { Text("Kopiëren") }

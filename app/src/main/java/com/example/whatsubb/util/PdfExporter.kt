@@ -50,19 +50,19 @@ object PdfExporter {
     fun share(context: Context, fileName: String, title: String, markdown: String, footer: String = FOOTER_DOCUMENT) =
         share(context, fileName, title) { write(context, it, title, markdown, footer) }
 
-    /** Zelfde als hierboven, maar [writePdf] tekent de PDF (bijv. een werkplan). */
-    fun share(context: Context, fileName: String, title: String, writePdf: (OutputStream) -> Unit) {
+    /** Zelfde als hierboven, maar [writeFile] schrijft het bestand (bijv. een werkplan als PDF of Word). */
+    fun share(context: Context, fileName: String, title: String, mimeType: String = "application/pdf", writeFile: (OutputStream) -> Unit) {
         clearShared(context)
         val file = File(shareDir(context).apply { mkdirs() }, fileName)
-        file.outputStream().use(writePdf)
+        file.outputStream().use(writeFile)
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
         val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "application/pdf"
+            type = mimeType
             putExtra(Intent.EXTRA_STREAM, uri)
             putExtra(Intent.EXTRA_SUBJECT, title)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        context.startActivity(Intent.createChooser(intent, "PDF delen via"))
+        context.startActivity(Intent.createChooser(intent, if (mimeType == "application/pdf") "PDF delen via" else "Delen via"))
     }
 
     fun write(context: Context, out: OutputStream, title: String, markdown: String, footer: String = FOOTER_DOCUMENT) {

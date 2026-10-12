@@ -99,7 +99,7 @@ object WerkplanPdf {
         pdf.table(
             floatArrayOf(0.4f, 0.6f),
             listOf(Row(listOf(Cell("Niveau", bold = true, shaded = true), Cell("Betekenis", bold = true, shaded = true)))) +
-                LEVELS.map { (level, meaning) -> Row(listOf(Cell(level, bold = true), Cell(meaning))) }
+                Werkplan.BEGELEIDINGSNIVEAUS.map { (level, meaning) -> Row(listOf(Cell(level, bold = true), Cell(meaning))) }
         )
 
         pdf.heading("6. Eindcontrole")
@@ -217,15 +217,6 @@ object WerkplanPdf {
             )
         )
     }
-
-    private val LEVELS = listOf(
-        "0 – Zelfstandig" to "Bewoner voert de taak zelfstandig uit.",
-        "1 – Reminder" to "Alleen een korte herinnering is nodig.",
-        "2 – Mondelinge instructie" to "Begeleiding vertelt concreet wat de bewoner moet doen.",
-        "3 – Voordoen" to "Begeleiding doet de handeling voor; bewoner doet deze daarna zelf.",
-        "4 – Samen doen" to "Bewoner en begeleiding voeren de taak samen uit.",
-        "5 – Tijdelijk overnemen" to "Begeleiding neemt de taak tijdelijk over omdat de bewoner deze op dat moment niet kan uitvoeren."
-    )
 
     private fun infoRow(l1: String, v1: String, l2: String, v2: String) =
         Row(listOf(Cell(l1, bold = true, shaded = true), Cell(v1), Cell(l2, bold = true, shaded = true), Cell(v2)))

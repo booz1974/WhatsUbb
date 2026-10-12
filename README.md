@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img alt="Versie" src="https://img.shields.io/badge/versie-1.7.2-5B8276">
+  <img alt="Versie" src="https://img.shields.io/badge/versie-1.8.0-5B8276">
   <img alt="Android" src="https://img.shields.io/badge/Android-7.0%2B-5B8276?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-Jetpack%20Compose-DDA77A?logo=kotlin&logoColor=white">
   <img alt="AI" src="https://img.shields.io/badge/AI-Google%20Gemini-2C3E35?logo=googlegemini&logoColor=white">
@@ -59,7 +59,7 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 
 | | |
 |---|---|
-| 🗺️ **Werkplan** | Vaste aanpak voor een taak (kamer schoonmaken, koken, boodschappen, logeren...) in één vaste UBB2-stijl: wat doet het team, wat doet de bewoner, vaste volgorde, begeleidingsniveau 0-5 en eindcontrole. Met een **aftekenkaart voor de bewoner** en een **evaluatieformulier** op aparte pagina's ([voorbeeld](docs/voorbeelden/werkplan-koken.pdf)) |
+| 🗺️ **Werkplan** | Vaste aanpak voor een taak (kamer schoonmaken, koken, boodschappen, logeren...) in één vaste UBB2-stijl: wat doet het team, wat doet de bewoner, vaste volgorde, begeleidingsniveau 0-5 en eindcontrole. Met een **aftekenkaart voor de bewoner** en een **evaluatieformulier** op aparte pagina's ([voorbeeld](docs/voorbeelden/werkplan-koken.pdf)). Downloaden of delen als PDF, of delen als Word-document (.docx) om verder te bewerken |
 | 📝 **Dagrapportage** | Van steekwoorden naar een objectieve rapportage |
 | 🗣️ **Gespreksverslag** | Inclusief **gesprek opnemen** en automatisch laten uitschrijven door Gemini |
 | 🚦 **Signaleringsplan** | Signalen en acties per fase (groen / oranje / rood) |

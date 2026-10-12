@@ -152,6 +152,16 @@ data class Werkplan(
             eindcontrole[], teamafspraak, kaart{titel, taken[{emoji, taak, watDoeIk}], hulp, doel}.
         """.trimIndent()
 
+        /** Vaste schaal voor de hoeveelheid ondersteuning (in PDF en Word). */
+        val BEGELEIDINGSNIVEAUS = listOf(
+            "0 – Zelfstandig" to "Bewoner voert de taak zelfstandig uit.",
+            "1 – Reminder" to "Alleen een korte herinnering is nodig.",
+            "2 – Mondelinge instructie" to "Begeleiding vertelt concreet wat de bewoner moet doen.",
+            "3 – Voordoen" to "Begeleiding doet de handeling voor; bewoner doet deze daarna zelf.",
+            "4 – Samen doen" to "Bewoner en begeleiding voeren de taak samen uit.",
+            "5 – Tijdelijk overnemen" to "Begeleiding neemt de taak tijdelijk over omdat de bewoner deze op dat moment niet kan uitvoeren."
+        )
+
         const val EXAMPLE_ASSET = "werkplan_voorbeeld.json"
     }
 }
