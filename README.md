@@ -34,9 +34,9 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 <p align="center">
   <img src="docs/screenshots/inloggen.png" alt="Inlogscherm" width="230">
   &nbsp;&nbsp;
-  <img src="docs/screenshots/bewoner-welkom.png" alt="Welkomstscherm bewoner, met knoppen om de begeleiding te bellen of via WhatsApp te chatten" width="230">
+  <img src="docs/screenshots/bewoner-welkom.png" alt="Welkomstscherm bewoner (Hey Whats Ubb ?!), met bel- en chatknop en voorbeeldvragen" width="230">
   &nbsp;&nbsp;
-  <img src="docs/screenshots/bewoner-chat.png" alt="Chat met de AI, met de 113-knoppen" width="230">
+  <img src="docs/screenshots/bewoner-chat.png" alt="Chat met de AI: wie werkt er vandaag?" width="230">
 </p>
 
 ---
@@ -69,11 +69,23 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 | 📄 **PDF** | Elk document als A4-PDF met logo, datum en paginanummers; ook kopiëren en delen |
 
 <p align="center">
-  <img src="docs/screenshots/begeleider-menu.png" alt="Menu voor begeleiders, met melding over ontbrekende weekinfo" width="230">
+  <img src="docs/screenshots/begeleider-menu.png" alt="Menu voor begeleiders, begroeting met voornaam" width="230">
   &nbsp;&nbsp;
-  <img src="docs/screenshots/weekinfo.png" alt="Weekinfo: foto van weekmenu en werkrooster" width="230">
+  <img src="docs/screenshots/weekinfo.png" alt="Weekinfo: weekmenu en werkrooster van deze week" width="230">
   &nbsp;&nbsp;
-  <img src="docs/screenshots/gespreksverslag.png" alt="Gespreksverslag met gesprek opnemen" width="230">
+  <img src="docs/screenshots/werkplan.png" alt="Werkplan met knoppen om te delen als PDF of Word" width="230">
+</p>
+
+#### 🗺️ Voorbeeld van een werkplan (PDF)
+
+Werkplan voor het team, aftekenkaart voor de bewoner en evaluatieformulier. [Hele PDF bekijken](docs/voorbeelden/werkplan-koken.pdf)
+
+<p align="center">
+  <img src="docs/screenshots/werkplan-pdf-1.png" alt="Werkplan, pagina 1: gegevens, doel, uitgangspunten en werkwijze" width="230">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/werkplan-pdf-4.png" alt="Aftekenkaart voor de bewoner: Mijn kookkaart" width="230">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/werkplan-pdf-5.png" alt="Evaluatieformulier" width="230">
 </p>
 
 ### ⚙️ Voor de beheerder (aparte beheerders-PIN)
