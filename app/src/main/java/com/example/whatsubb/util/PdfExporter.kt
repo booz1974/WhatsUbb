@@ -47,10 +47,14 @@ object PdfExporter {
     }
 
     /** Maakt een tijdelijke PDF en opent het deel-menu van Android. */
-    fun share(context: Context, fileName: String, title: String, markdown: String, footer: String = FOOTER_DOCUMENT) {
+    fun share(context: Context, fileName: String, title: String, markdown: String, footer: String = FOOTER_DOCUMENT) =
+        share(context, fileName, title) { write(context, it, title, markdown, footer) }
+
+    /** Zelfde als hierboven, maar [writePdf] tekent de PDF (bijv. een werkplan). */
+    fun share(context: Context, fileName: String, title: String, writePdf: (OutputStream) -> Unit) {
         clearShared(context)
         val file = File(shareDir(context).apply { mkdirs() }, fileName)
-        file.outputStream().use { write(context, it, title, markdown, footer) }
+        file.outputStream().use(writePdf)
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "application/pdf"

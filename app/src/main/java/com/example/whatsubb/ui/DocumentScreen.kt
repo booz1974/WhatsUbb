@@ -232,9 +232,25 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
                             colors = ButtonDefaults.buttonColors(containerColor = SagePrimary),
                             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
                         ) { Text("📄  Download als PDF") }
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 4.dp)) {
-                            OutlinedButton(onClick = { copyToClipboard(context, text) }, shape = CircleShape) { Text("Kopiëren") }
-                            OutlinedButton(onClick = { shareText(context, type.title, text) }, shape = CircleShape) { Text("Delen") }
+                        val werkplan = plan
+                        if (werkplan != null) {
+                            // Bij een werkplan is alleen de PDF nodig: downloaden of delen.
+                            OutlinedButton(
+                                onClick = {
+                                    runCatching {
+                                        PdfExporter.share(context, pdfFileName("Werkplan ${werkplan.taak}"), "Werkplan ${werkplan.taak}") {
+                                            WerkplanPdf.write(context, it, werkplan)
+                                        }
+                                    }.onFailure { Toast.makeText(context, "PDF maken mislukt", Toast.LENGTH_SHORT).show() }
+                                },
+                                shape = CircleShape,
+                                modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
+                            ) { Text("📤  Delen als PDF", color = SagePrimary) }
+                        } else {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 4.dp)) {
+                                OutlinedButton(onClick = { copyToClipboard(context, text) }, shape = CircleShape) { Text("Kopiëren") }
+                                OutlinedButton(onClick = { shareText(context, type.title, text) }, shape = CircleShape) { Text("Delen") }
+                            }
                         }
                     }
                 }
