@@ -191,7 +191,7 @@ docs/voorbeelden/              voorbeeld-PDF's
 ### Techniek
 - **Kotlin** + **Jetpack Compose** (Material 3), minSdk 24, targetSdk 37
 - **Google Gemini** via de REST-API (`generateContent` en de Files API) — geen extra AI-libraries
-- PDF met de ingebouwde `PdfDocument`, Word-import zonder externe libraries
+- PDF met de ingebouwde `PdfDocument`, Word-import en -export (.docx) zonder externe libraries
 - Spraakherkenning via de spraakdienst van het toestel
 
 ---
