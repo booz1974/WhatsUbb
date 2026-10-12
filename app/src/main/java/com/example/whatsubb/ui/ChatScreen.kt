@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.speech.RecognizerIntent
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
@@ -42,6 +43,7 @@ import com.example.whatsubb.privacy.Anonymizer
 import com.example.whatsubb.ui.theme.*
 import com.example.whatsubb.util.PdfExporter
 import com.example.whatsubb.util.Phones
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -64,6 +66,16 @@ fun ChatScreen(
     val messages = remember { mutableStateListOf<ChatMessage>() }
     val history = remember { mutableStateListOf<Turn>() } // geanonimiseerde versie voor de AI
     val listState = rememberLazyListState()
+    var pending by remember { mutableStateOf<Job?>(null) } // lopende vraag aan de AI
+
+    // Terug-toets tijdens een gesprek: gesprek wissen en terug naar het welkomstscherm met de voorbeeldvragen.
+    BackHandler(enabled = messages.isNotEmpty() || isLoading) {
+        pending?.cancel()
+        messages.clear()
+        history.clear()
+        questionText = ""
+        lastScrubCount = 0
+    }
 
     LaunchedEffect(messages.size, isLoading) {
         val count = messages.size + if (isLoading) 1 else 0
@@ -199,7 +211,7 @@ fun ChatScreen(
         history.add(Turn(fromUser = true, text = scrubbed.text))
         isLoading = true
 
-        scope.launch {
+        pending = scope.launch {
             try {
                 val reply = services.aiClient().generate(
                     systemPrompt = services.knowledgeBase.systemPrompt(role),
@@ -536,7 +548,7 @@ private fun Help113Card(onCall: () -> Unit, onChat: () -> Unit) {
 
 private val EXAMPLE_QUESTIONS = listOf(
     "🍽️" to "Wat eten we vanavond?",
-    "👥" to "Wie werkt er donderdag?",
+    "👥" to "Wie werkt er vandaag?",
     "📋" to "Hoe laat moet ik binnen zijn?",
     "🧺" to "Hoe doe ik de was?",
     "💬" to "Ik voel me niet zo goed"

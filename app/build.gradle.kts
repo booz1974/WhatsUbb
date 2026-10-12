@@ -22,8 +22,8 @@ android {
         applicationId = "com.example.whatsubb"
         minSdk = 24
         targetSdk = 37
-        versionCode = 16
-        versionName = "1.7.1"
+        versionCode = 17
+        versionName = "1.7.2"
         // Datum van deze versie (wordt onderaan in Beheer getoond); bij een nieuwe versie bijwerken.
         buildConfigField("String", "RELEASE_DATE", "\"12 oktober 2026\"")
 
