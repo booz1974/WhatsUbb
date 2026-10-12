@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="app/src/main/res/drawable-nodpi/whats_ubb_logo.png" alt="Whats Ubb" width="220">
+  <img src="app/src/main/res/drawable-nodpi/whats_ubb_logo.png" alt="Whats Ubb" width="200">
 </p>
 
 <h1 align="center">Whats Ubb</h1>
@@ -16,6 +16,15 @@
   <img alt="AI" src="https://img.shields.io/badge/AI-Google%20Gemini-2C3E35?logo=googlegemini&logoColor=white">
 </p>
 
+<p align="center">
+  <a href="#wat-is-whats-ubb">Wat is het?</a> ·
+  <a href="#functies">Functies</a> ·
+  <a href="#hoe-de-ai-werkt">Hoe de AI werkt</a> ·
+  <a href="#privacy-en-veiligheid">Privacy</a> ·
+  <a href="#aan-de-slag">Aan de slag</a> ·
+  <a href="#voor-ontwikkelaars">Voor ontwikkelaars</a>
+</p>
+
 ---
 
 ## Wat is Whats Ubb?
@@ -24,20 +33,13 @@ Whats Ubb is een Android-app voor een woonafdeling voor jongvolwassenen (18–30
 beperking, autisme, persoonlijkheidsproblematiek of multiproblematiek. Het doel van de afdeling is dat bewoners binnen
 drie jaar zelfstandig kunnen wonen.
 
-- **Bewoners** kunnen de app alles vragen: over de regels en afspraken, het weekmenu, wie er werkt, hoe je iets doet,
-  maar ook als ze zich niet fijn voelen of ergens bang voor zijn.
-- **Begeleiders** maken met de AI in een paar minuten werkplannen, rapportages en gespreksverslagen.
-- **De beheerder** bepaalt wat de AI weet: de afspraken, documenten, de werkwijze en de rol van de AI.
+| Wie | Wat doet de app voor hen? |
+|---|---|
+| 🙋 **Bewoners** | Alles vragen: regels en afspraken, het weekmenu, wie er werkt, hoe je iets doet, maar ook als je je niet fijn voelt of ergens bang voor bent |
+| 🧑‍💼 **Begeleiders** | In een paar minuten werkplannen, rapportages en gespreksverslagen maken met de AI |
+| ⚙️ **Beheerder** | Bepalen wat de AI weet: de afspraken, documenten, de werkwijze en de rol van de AI |
 
 Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens van bewoners opgeslagen of verstuurd.
-
-<p align="center">
-  <img src="docs/screenshots/inloggen.png" alt="Inlogscherm" width="230">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/bewoner-welkom.png" alt="Welkomstscherm bewoner (Hey Whats Ubb ?!), met bel- en chatknop en voorbeeldvragen" width="230">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/bewoner-chat.png" alt="Chat met de AI: wie werkt er vandaag?" width="230">
-</p>
 
 ---
 
@@ -45,21 +47,39 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 
 ### 🙋 Voor bewoners
 
-| | |
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/inloggen.png" alt="Inlogscherm" width="200"><br><sub>Inloggen</sub></td>
+    <td align="center"><img src="docs/screenshots/bewoner-welkom.png" alt="Welkomstscherm bewoner (Hey Whats Ubb ?!), met bel- en chatknop en voorbeeldvragen" width="200"><br><sub>Welkom, bel- en chatknop</sub></td>
+    <td align="center"><img src="docs/screenshots/bewoner-chat.png" alt="Chat met de AI: wie werkt er vandaag?" width="200"><br><sub>Antwoord van de AI</sub></td>
+  </tr>
+</table>
+
+| Functie | Wat doet het? |
 |---|---|
 | 💬 **Vraag alles** | Chat in eenvoudige taal (B1) over regels, afspraken, het weekmenu, het rooster, apparaten op de afdeling, praktische dingen en gevoelens |
 | 🎙️ **Spraak** | Microfoonknop in het invoerveld: inspreken in plaats van typen |
 | 👆 **Voorbeeldvragen** | Aanklikbare vragen zoals *"Wat eten we vanavond?"* en *"Ik voel me niet zo goed"* |
 | 📞 **Bel- en chatknop** | Eén tik om de begeleiding te bellen of via WhatsApp te chatten; tussen 23:00 en 08:00 de bereikbare dienst (met controlevraag) |
-| 📄 **Antwoord als PDF** | Elk antwoord (met de vraag erbij) opslaan als PDF of direct delen als PDF |
+| 📄 **Antwoord als PDF** | Elk antwoord (met de vraag erbij) opslaan of delen als PDF |
 | 🆘 **Veilig** | Bij crisis verwijst de AI naar de begeleiding, de bereikbare dienst, 112 of 113, afhankelijk van het tijdstip |
 | 💚 **113-knoppen** | Gaat het over somberheid of suïcidale gedachten? Dan verschijnen onder het antwoord knoppen om 113 te bellen of te chatten (gratis, anoniem, dag en nacht) |
 
-### 🧑‍💼 Voor begeleiders (begeleider-PIN)
+### 🧑‍💼 Voor begeleiders
 
-| | |
+Toegang met de begeleider-PIN.
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/begeleider-menu.png" alt="Menu voor begeleiders, begroeting met voornaam" width="200"><br><sub>Menu</sub></td>
+    <td align="center"><img src="docs/screenshots/weekinfo.png" alt="Weekinfo: weekmenu en werkrooster van deze week" width="200"><br><sub>Weekinfo</sub></td>
+    <td align="center"><img src="docs/screenshots/werkplan.png" alt="Werkplan met knoppen om te delen als PDF of Word" width="200"><br><sub>Werkplan, delen als PDF of Word</sub></td>
+  </tr>
+</table>
+
+| Functie | Wat doet het? |
 |---|---|
-| 🗺️ **Werkplan** | Vaste aanpak voor een taak (kamer schoonmaken, koken, boodschappen, logeren...) in één vaste UBB2-stijl: wat doet het team, wat doet de bewoner, vaste volgorde, begeleidingsniveau 0-5 en eindcontrole. Met een **aftekenkaart voor de bewoner** en een **evaluatieformulier** op aparte pagina's ([voorbeeld](docs/voorbeelden/werkplan-koken.pdf)). Delen als PDF of als Word-document (.docx) om verder te bewerken |
+| 🗺️ **Werkplan** | Vaste aanpak voor een taak (kamer schoonmaken, koken, boodschappen, logeren...) in één vaste UBB2-stijl: wat doet het team, wat doet de bewoner, vaste volgorde, begeleidingsniveau 0-5 en eindcontrole. Met een **aftekenkaart voor de bewoner** en een **evaluatieformulier**. Delen als PDF of als Word-document (.docx) om verder te bewerken |
 | 📝 **Dagrapportage** | Van steekwoorden naar een objectieve rapportage |
 | 🗣️ **Gespreksverslag** | Inclusief **gesprek opnemen** en automatisch laten uitschrijven door Gemini |
 | 🚦 **Signaleringsplan** | Signalen en acties per fase (groen / oranje / rood) |
@@ -68,34 +88,29 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 | 💬 **Vraag over afspraken** | Chat over regels, afspraken en de doelgroep |
 | 📄 **PDF** | Elk document als A4-PDF met logo, datum en paginanummers; ook kopiëren en delen |
 
-<p align="center">
-  <img src="docs/screenshots/begeleider-menu.png" alt="Menu voor begeleiders, begroeting met voornaam" width="230">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/weekinfo.png" alt="Weekinfo: weekmenu en werkrooster van deze week" width="230">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/werkplan.png" alt="Werkplan met knoppen om te delen als PDF of Word" width="230">
-</p>
+#### Voorbeeld: werkplan als PDF
 
-#### 🗺️ Voorbeeld van een werkplan (PDF)
+Een werkplan bestaat uit drie delen: het werkplan voor het team, een aftekenkaart voor de bewoner en een
+evaluatieformulier. [Hele PDF bekijken](docs/voorbeelden/werkplan-koken.pdf)
 
-Werkplan voor het team, aftekenkaart voor de bewoner en evaluatieformulier. [Hele PDF bekijken](docs/voorbeelden/werkplan-koken.pdf)
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/werkplan-pdf-1.png" alt="Werkplan, pagina 1: gegevens, doel, uitgangspunten en werkwijze" width="200"><br><sub>Werkplan voor het team</sub></td>
+    <td align="center"><img src="docs/screenshots/werkplan-pdf-4.png" alt="Aftekenkaart voor de bewoner: Mijn kookkaart" width="200"><br><sub>Aftekenkaart voor de bewoner</sub></td>
+    <td align="center"><img src="docs/screenshots/werkplan-pdf-5.png" alt="Evaluatieformulier" width="200"><br><sub>Evaluatieformulier</sub></td>
+  </tr>
+</table>
 
-<p align="center">
-  <img src="docs/screenshots/werkplan-pdf-1.png" alt="Werkplan, pagina 1: gegevens, doel, uitgangspunten en werkwijze" width="230">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/werkplan-pdf-4.png" alt="Aftekenkaart voor de bewoner: Mijn kookkaart" width="230">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/werkplan-pdf-5.png" alt="Evaluatieformulier" width="230">
-</p>
+### ⚙️ Voor de beheerder
 
-### ⚙️ Voor de beheerder (aparte beheerders-PIN)
+Toegang met een aparte beheerders-PIN, via Begeleider → ⚙️ Beheer.
 
-| | |
+| Functie | Wat doet het? |
 |---|---|
 | 🧠 **AI-rol** | De persoonlijkheid van de AI: gedragswetenschapper, doelgroep, methodieken (Verbindend Gezag & Geweldloos Verzet, Geef me de Vijf) en aanwezigheidstijden |
+| 📚 **Kennisbank** | Vrije tekst met de afspraken en informatie over de afdeling |
 | 📎 **Documenten** | Regels, afspraken en werkwijze uploaden als PDF, Word (.docx) of tekst |
 | 🔌 **Apparaten** | Foto van de wasmachine, droger, het koffieapparaat of de kookplaat: de AI leest de knoppen en programma's uit, zodat bewoners stap voor stap uitleg krijgen over precies dat apparaat (alleen de tekst wordt bewaard) |
-| 📚 **Kennisbank** | Vrije tekst met de afspraken en informatie over de afdeling |
 | 📞 **Telefoonnummers** | 06-nummer van de begeleiding en nummer van de bereikbare dienst |
 | 👤 **Voornaam** | Voornaam van de begeleider op dit toestel: het menu begroet je ermee en je kunt de AI vragen "wanneer werk ik?". Bewoners krijgen de naam nooit mee |
 | 🔑 **Toegang** | Bewonerscode (optioneel), begeleider-PIN, beheerders-PIN, AI-sleutel en model |
@@ -106,15 +121,15 @@ Werkplan voor het team, aftekenkaart voor de bewoner en evaluatieformulier. [Hel
 
 Bij elke vraag stelt de app één instructie samen voor Google Gemini:
 
-```
-1. AI-rol            wie de AI is en hoe hij reageert           (Beheer → AI-rol)
-2. Datum en tijd     plus de komende 8 dagen, zodat "maandagochtend" altijd de eerstvolgende is
-3. Privacyregels     nooit namen van bewoners, anoniem blijven
-4. Kennisbank        afspraken en informatie over UBB2          (Beheer → Kennisbank)
-5. Documenten        geüploade regels en werkwijzen             (Beheer → Documenten)
-6. Weekinfo          weekmenu en rooster van deze/volgende week (Begeleider → Weekinfo)
-7. Rolinstructie     taal en toon voor bewoner óf begeleider
-```
+| # | Onderdeel | Inhoud | Waar in te stellen |
+|---|---|---|---|
+| 1 | **AI-rol** | Wie de AI is en hoe hij reageert | Beheer → AI-rol |
+| 2 | **Datum en tijd** | Plus de komende 8 dagen, zodat "maandagochtend" altijd de eerstvolgende is | automatisch |
+| 3 | **Privacyregels** | Nooit namen van bewoners, anoniem blijven | vast |
+| 4 | **Kennisbank** | Afspraken en informatie over UBB2 | Beheer → Kennisbank |
+| 5 | **Documenten** | Geüploade regels en werkwijzen | Beheer → Documenten |
+| 6 | **Weekinfo** | Weekmenu en rooster van deze en volgende week | Begeleider → Weekinfo |
+| 7 | **Rolinstructie** | Taal en toon voor bewoner óf begeleider | vast |
 
 De AI is opgedragen om **alleen** op deze kennis te antwoorden en eerlijk te zeggen als hij iets niet weet,
 in plaats van regels te verzinnen.
@@ -128,22 +143,41 @@ in plaats van regels te verzinnen.
 > **betaalde** Gemini API (bij de gratis versie mag Google ingestuurde tekst gebruiken) en stem het gebruik af met de
 > privacyfunctionaris (FG) van de organisatie.
 
-- **Anonimiseren vóór verzending**: telefoonnummers, e-mailadressen, data, adressen, postcodes, BSN, IBAN en
-  opgegeven namen worden vervangen door `[naam]`, `[datum]` enz.
-- **Niets bewaren**: gesprekken en gemaakte documenten worden niet opgeslagen; na uitloggen is alles weg. Gedeelde
-  PDF's worden bij de volgende keer delen en bij het starten van de app gewist.
-- **Opnames**: alleen na een toestemmingsvinkje; na het uitschrijven direct bij Google verwijderd en van het toestel
-  gewist zodra het scherm wordt verlaten (tenzij zelf opgeslagen).
-- **Foto's** van weekmenu en rooster: alleen de uitgelezen tekst wordt bewaard, nooit de foto. Verlopen weken worden
-  automatisch verwijderd.
-- **Codes** worden gehasht opgeslagen; Android-back-ups staan uit.
-- Namen van **medewerkers** uit het rooster mag de AI noemen; namen van **bewoners** nooit.
+| | Wat de app doet |
+|---|---|
+| 🕶️ **Anonimiseren vóór verzending** | Telefoonnummers, e-mailadressen, data, adressen, postcodes, BSN, IBAN en opgegeven namen worden vervangen door `[naam]`, `[datum]` enz. |
+| 🧹 **Niets bewaren** | Gesprekken en gemaakte documenten worden niet opgeslagen; na uitloggen is alles weg. Gedeelde PDF's worden bij de volgende keer delen en bij het starten van de app gewist |
+| 🎙️ **Opnames** | Alleen na een toestemmingsvinkje; na het uitschrijven direct bij Google verwijderd en van het toestel gewist zodra het scherm wordt verlaten (tenzij zelf opgeslagen) |
+| 📷 **Foto's** | Van weekmenu, rooster en apparaten wordt alleen de uitgelezen tekst bewaard, nooit de foto. Verlopen weken worden automatisch verwijderd |
+| 🔐 **Codes** | Gehasht opgeslagen; Android-back-ups staan uit |
+| 👥 **Namen** | Namen van **medewerkers** uit het rooster mag de AI noemen; namen van **bewoners** nooit |
 
 ---
 
 ## Aan de slag
 
+### Eerste keer gebruiken
+
+1. Tik op **Ik ben begeleider** en stel de begeleider-PIN in.
+2. Open **⚙️ Beheer** en stel de beheerders-PIN in.
+3. Vul de **AI-sleutel**, de **kennisbank**, de **telefoonnummers** en eventueel **documenten** in.
+4. Zet via **🗓️ Weekinfo** het weekmenu en rooster van deze week klaar.
+5. Voeg in **⚙️ Beheer** bij **🔌 Apparaten** foto's toe van de wasmachine, droger, het koffieapparaat en andere apparaten.
+
+### Bekende beperkingen en ideeën
+
+- Alle instellingen, documenten en weekinfo staan **per toestel**. Een kleine gedeelde server zou ervoor zorgen dat
+  de beheerder één keer uploadt voor alle toestellen, en dat de AI-sleutel niet meer in de app hoeft.
+- Opnames zijn AAC in plaats van MP3 (Android kan geen MP3 opnemen).
+- Het standaardmodel is `gemini-flash-latest`; reageert dat traag, kies dan in Beheer bijvoorbeeld
+  `gemini-flash-lite-latest`.
+
+---
+
+## Voor ontwikkelaars
+
 ### Benodigd
+
 - [Android Studio](https://developer.android.com/studio) (met JDK 17+)
 - Een Gemini API-sleutel van [Google AI Studio](https://aistudio.google.com/apikey)
 - Een Android-toestel of emulator met Android 7.0 of hoger
@@ -170,51 +204,33 @@ Kies één van beide:
 > [!WARNING]
 > Een sleutel die in de APK is ingebouwd kan eruit worden gehaald. Deel zo'n APK niet met anderen.
 
-### Eerste keer gebruiken
-1. Tik op **Ik ben begeleider** en stel de begeleider-PIN in.
-2. Open **⚙️ Beheer** en stel de beheerders-PIN in.
-3. Vul de **AI-sleutel**, de **kennisbank**, de **telefoonnummers** en eventueel **documenten** in.
-4. Zet via **🗓️ Weekinfo** het weekmenu en rooster van deze week klaar.
-5. Voeg in **⚙️ Beheer** bij **🔌 Apparaten** foto's toe van de wasmachine, droger, het koffieapparaat en andere apparaten.
-
----
-
-## Projectstructuur
-
-```
-app/src/main/
-├── assets/
-│   ├── ai_rol.md              standaard AI-rol (prompt)
-│   ├── werkplan_voorbeeld.json voorbeeld-werkplan (stijl en opbouw voor de AI)
-│   └── ubb2_kennis.md         standaard kennisbank (sjabloon)
-└── java/com/example/whatsubb/
-    ├── MainActivity.kt        navigatie en AppServices
-    ├── ai/                    GeminiClient: chat, Files API (audio, PDF, foto's)
-    ├── audio/                 opnemen van gesprekken (AAC)
-    ├── data/                  instellingen, kennisbank, documenten, weekinfo, apparaten, documenttypes
-    ├── privacy/               Anonymizer
-    ├── ui/                    Compose-schermen
-    └── util/                  PDF-export (ook werkplan-opmaak), Markdown, documentimport, foto's, weken
-design/                        origineel logo
-docs/screenshots/              screenshots voor deze README
-docs/voorbeelden/              voorbeeld-PDF's
-```
-
 ### Techniek
+
 - **Kotlin** + **Jetpack Compose** (Material 3), minSdk 24, targetSdk 37
 - **Google Gemini** via de REST-API (`generateContent` en de Files API) — geen extra AI-libraries
 - PDF met de ingebouwde `PdfDocument`, Word-import en -export (.docx) zonder externe libraries
 - Spraakherkenning via de spraakdienst van het toestel
 
----
+### Projectstructuur
 
-## Bekende beperkingen en ideeën
-
-- Alle instellingen, documenten en weekinfo staan **per toestel**. Een kleine gedeelde server zou ervoor zorgen dat
-  de beheerder één keer uploadt voor alle toestellen, en dat de AI-sleutel niet meer in de app hoeft.
-- Opnames zijn AAC in plaats van MP3 (Android kan geen MP3 opnemen).
-- Het standaardmodel is `gemini-flash-latest`; reageert dat traag, kies dan in Beheer bijvoorbeeld
-  `gemini-flash-lite-latest`.
+```
+app/src/main/
+├── assets/
+│   ├── ai_rol.md               standaard AI-rol (prompt)
+│   ├── werkplan_voorbeeld.json voorbeeld-werkplan (stijl en opbouw voor de AI)
+│   └── ubb2_kennis.md          standaard kennisbank (sjabloon)
+└── java/com/example/whatsubb/
+    ├── MainActivity.kt         navigatie en AppServices
+    ├── ai/                     GeminiClient: chat, Files API (audio, PDF, foto's)
+    ├── audio/                  opnemen van gesprekken (AAC)
+    ├── data/                   instellingen, kennisbank, documenten, weekinfo, apparaten, documenttypes
+    ├── privacy/                Anonymizer
+    ├── ui/                     Compose-schermen
+    └── util/                   PDF-export (ook werkplan-opmaak), Markdown, documentimport, foto's, weken
+design/                         origineel logo
+docs/screenshots/               screenshots voor deze README
+docs/voorbeelden/               voorbeeld-PDF's
+```
 
 ---
 
