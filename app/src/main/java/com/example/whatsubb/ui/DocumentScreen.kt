@@ -26,9 +26,11 @@ import com.example.whatsubb.ai.AiException
 import com.example.whatsubb.ai.Turn
 import com.example.whatsubb.data.DocumentType
 import com.example.whatsubb.data.Role
+import com.example.whatsubb.data.Werkplan
 import com.example.whatsubb.privacy.Anonymizer
 import com.example.whatsubb.ui.theme.*
 import com.example.whatsubb.util.PdfExporter
+import com.example.whatsubb.util.WerkplanPdf
 import kotlinx.coroutines.launch
 
 @Composable
@@ -42,12 +44,17 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
     var isLoading by remember { mutableStateOf(false) }
     var scrubCount by remember { mutableIntStateOf(0) }
     var feedback by remember { mutableStateOf("") }
+    // Bij een werkplan: het uitgelezen plan en het ruwe AI-antwoord (JSON), nodig voor aanpassingen.
+    var plan by remember { mutableStateOf<Werkplan?>(null) }
+    var rawReply by remember { mutableStateOf<String?>(null) }
 
     val pdfLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri ->
         val text = result ?: return@rememberLauncherForActivityResult
         if (uri != null) {
             runCatching {
-                context.contentResolver.openOutputStream(uri)?.use { PdfExporter.write(context, it, type.title, text) }
+                context.contentResolver.openOutputStream(uri)?.use { out ->
+                    plan?.let { WerkplanPdf.write(context, out, it) } ?: PdfExporter.write(context, out, type.title, text)
+                }
             }.onSuccess {
                 Toast.makeText(context, "PDF opgeslagen", Toast.LENGTH_SHORT).show()
             }.onFailure {
@@ -69,11 +76,18 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
         val scrubbedRevision = revision?.let { Anonymizer.scrub(it, names) }
         scrubCount = scrubbedInput.replacements + (scrubbedRevision?.replacements ?: 0)
 
+        // Bij een werkplan gaat het vaste voorbeeld mee, zodat elk werkplan dezelfde stijl krijgt.
+        val instructions = if (type.werkplan) {
+            val example = context.assets.open(Werkplan.EXAMPLE_ASSET).bufferedReader().use { it.readText() }
+            "${type.instructions}\n\nVOORBEELD (volg deze stijl en opbouw, niet de inhoud):\n$example"
+        } else type.instructions
+
         val turns = buildList {
-            add(Turn(true, "Opdracht: ${type.title}\n\n${type.instructions}\n\nGegevens van de begeleider:\n\n${scrubbedInput.text}"))
+            add(Turn(true, "Opdracht: ${type.title}\n\n$instructions\n\nGegevens van de begeleider:\n\n${scrubbedInput.text}"))
             if (scrubbedRevision != null && result != null) {
-                add(Turn(false, result!!))
-                add(Turn(true, "Pas het document aan: ${scrubbedRevision.text}"))
+                add(Turn(false, rawReply ?: result!!))
+                val again = if (type.werkplan) " Antwoord weer met alleen de volledige JSON." else ""
+                add(Turn(true, "Pas het document aan: ${scrubbedRevision.text}$again"))
             }
         }
 
@@ -81,7 +95,19 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
         error = null
         scope.launch {
             try {
-                result = services.aiClient().generate(services.knowledgeBase.systemPrompt(Role.BEGELEIDER), turns)
+                val reply = services.aiClient().generate(services.knowledgeBase.systemPrompt(Role.BEGELEIDER), turns)
+                if (type.werkplan) {
+                    val parsed = Werkplan.parse(reply)
+                    if (parsed == null) {
+                        error = "Het werkplan kwam niet goed terug van de AI. Probeer het nog een keer."
+                        return@launch
+                    }
+                    plan = parsed
+                    result = parsed.toMarkdown()
+                } else {
+                    result = reply
+                }
+                rawReply = reply
                 feedback = ""
             } catch (e: AiException) {
                 error = e.message
@@ -201,7 +227,7 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
                             color = TextDark.copy(alpha = 0.6f)
                         )
                         Button(
-                            onClick = { pdfLauncher.launch(pdfFileName(type.title)) },
+                            onClick = { pdfLauncher.launch(pdfFileName(plan?.let { "Werkplan ${it.taak}" } ?: type.title)) },
                             shape = CircleShape,
                             colors = ButtonDefaults.buttonColors(containerColor = SagePrimary),
                             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
@@ -231,7 +257,7 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
 
 private fun pdfFileName(title: String): String {
     val date = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
-    return "${title.replace(' ', '_')}_$date.pdf"
+    return "${title.replace(Regex("[^A-Za-z0-9]+"), "_")}_$date.pdf"
 }
 
 private fun copyToClipboard(context: Context, text: String) {

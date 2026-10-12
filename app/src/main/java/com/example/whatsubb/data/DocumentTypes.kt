@@ -14,7 +14,9 @@ data class DocumentType(
     val instructions: String,
     val fields: List<DocField>,
     /** Als dit is ingesteld, kan een gesprek worden opgenomen; de transcriptie komt in dit veld. */
-    val transcriptFieldIndex: Int? = null
+    val transcriptFieldIndex: Int? = null,
+    /** De AI geeft een [Werkplan] als JSON terug; de PDF krijgt de vaste werkplan-opmaak (WerkplanPdf). */
+    val werkplan: Boolean = false
 )
 
 /** De dingen die een begeleider met de AI kan maken. Breid deze lijst gerust uit. */
@@ -23,23 +25,17 @@ val documentTypes = listOf(
         id = "werkplan",
         emoji = "🗺️",
         title = "Werkplan",
-        description = "Doelen, acties en afspraken voor een bewoner",
-        instructions = """
-            Maak een werkplan/begeleidingsplan. Gebruik deze opbouw:
-            1. Hulpvraag (in de woorden van de bewoner waar mogelijk)
-            2. Sterke kanten en beschermende factoren
-            3. Doelen: formuleer elk doel SMART
-            4. Acties per doel: wat doet de bewoner, wat doet de begeleiding
-            5. Afspraken en aandachtspunten in de omgang
-            6. Evaluatiemoment
-        """.trimIndent(),
+        description = "Vaste aanpak voor een taak, met aftekenkaart en evaluatie",
+        instructions = Werkplan.INSTRUCTIONS,
         fields = listOf(
-            DocField("Hulpvraag / situatie", "Waar loopt de bewoner tegenaan? Wat wil de bewoner bereiken?"),
-            DocField("Sterke kanten", "Wat gaat goed, wat helpt?"),
-            DocField("Gewenste doelen", "Ruwe doelen, de AI maakt ze SMART"),
-            DocField("Aandachtspunten", "Risico's, triggers, wat werkt wel/niet"),
-            DocField("Evaluatietermijn", "Bijv. over 6 weken", multiline = false)
-        )
+            DocField("Taak of onderwerp", "Bijv. kamer schoonmaken, koken, boodschappen doen, naar huis gaan, logeren", multiline = false),
+            DocField("Wanneer en hoe vaak?", "Bijv. elke vrijdag om 10.30, ± 45 minuten", multiline = false),
+            DocField("Doel", "Wat moet de bewoner (meer) zelf leren of kunnen?"),
+            DocField("Hoe gaat het nu?", "Wat lukt al, waar is hulp bij nodig, wat werkt wel of niet?"),
+            DocField("Aandachtspunten", "Bijv. spanning, prikkels, medicatie, afspraken met thuis"),
+            DocField("Start en evaluatie", "Bijv. start volgende week, evaluatie over 6 weken", multiline = false)
+        ),
+        werkplan = true
     ),
     DocumentType(
         id = "rapportage",

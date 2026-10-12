@@ -1,0 +1,71 @@
+{
+  "taak": "Wekelijks kamer schoonmaken",
+  "frequentie": "1× per week",
+  "vasteDag": "Vrijdag",
+  "vasteTijd": "10.30",
+  "begeleider": "Wisselend",
+  "duur": "± 45–60 min.",
+  "startdatum": "18 september 2026",
+  "evaluatiedatum": "",
+  "doel": "De bewoner leert zijn kamer steeds zelfstandiger op te ruimen en schoon te houden. De begeleiding biedt een vaste, voorspelbare structuur en bouwt de ondersteuning stap voor stap af. Het uitgangspunt is: zo veel mogelijk zelf doen, begeleiding ondersteunt waar nodig.",
+  "uitgangspunten": [
+    "Iedere begeleider gebruikt dezelfde vaste volgorde.",
+    "Het schoonmaakmoment vindt bij voorkeur iedere week op dezelfde dag en tijd plaats.",
+    "Geef korte, concrete opdrachten en bij voorkeur één opdracht tegelijk.",
+    "Geef de bewoner tijd om de opdracht te verwerken en uit te voeren.",
+    "Laat de bewoner zoveel mogelijk zelf doen; neem taken niet onnodig over.",
+    "Geef positieve, concrete feedback op wat goed gaat.",
+    "Keuzes mogen binnen het afgesproken kader, bijvoorbeeld: 'Wil je beginnen met kleding of afval?'",
+    "Bij spanning: pauzeren, rustig blijven en daarna met één kleine stap opnieuw beginnen."
+  ],
+  "werkwijze": [
+    {"stap": "Aankondigen", "wat": "Vooraf herinneren aan het vaste schoonmaakmoment.", "bewoner": "Luistert en maakt zich klaar.", "begeleiding": "Kondigt rustig en voorspelbaar aan."},
+    {"stap": "Starten", "wat": "Samen kort bekijken wat er moet gebeuren.", "bewoner": "Kiest/spreekt taakverdeling af.", "begeleiding": "Geeft overzicht en maakt taakverdeling."},
+    {"stap": "Opruimen", "wat": "Kleding, afval, servies en spullen op hun plek.", "bewoner": "Doet zoveel mogelijk zelf.", "begeleiding": "Stuurt kort bij indien nodig."},
+    {"stap": "Schoonmaken", "wat": "Bed, oppervlakken, wastafel, toilet en vloer.", "bewoner": "Voert eigen taken uit.", "begeleiding": "Instrueert/werkt samen waar nodig."},
+    {"stap": "Afronden", "wat": "Samen controleren of alle afgesproken taken klaar zijn.", "bewoner": "Kijkt mee en controleert.", "begeleiding": "Gebruikt de checklist en geeft feedback."},
+    {"stap": "Rapporteren", "wat": "Kort vastleggen hoe het ging.", "bewoner": "—", "begeleiding": "Rapporteert volgens teamafspraak."}
+  ],
+  "volgordeTitel": "Vaste schoonmaakvolgorde",
+  "volgorde": [
+    "Kleding en spullen opruimen; vuile was in de wasmand.",
+    "Afval verzamelen en weggooien; de vloer is leeg; medicatielade opruimen/uitzoeken.",
+    "Servies en bestek naar de vaatwasser.",
+    "Bed opmaken / beddengoed verschonen volgens afspraak (min. 1× per week).",
+    "Stof afnemen: bureau, tafel en andere oppervlakken met een natte doek.",
+    "Wastafel schoonmaken met een natte doek.",
+    "Toilet schoonmaken.",
+    "Stofzuigen.",
+    "Dweilen indien nodig.",
+    "Samen eindcontrole uitvoeren."
+  ],
+  "eindcontrole": [
+    "Kamer is opgeruimd.",
+    "Kleding zit in de kast of wasmand.",
+    "Afval is opgeruimd.",
+    "Medicatielade is op orde, lege verpakkingen zijn weg.",
+    "De vloer is leeg.",
+    "Servies/bestek is naar de vaatwasser.",
+    "Oppervlakken zijn schoongemaakt.",
+    "Wastafel is schoongemaakt.",
+    "Toilet is schoongemaakt.",
+    "Vloer is gestofzuigd.",
+    "Afgesproken overige taak is uitgevoerd."
+  ],
+  "teamafspraak": "We werken vanuit dezelfde structuur, maar sluiten aan bij wat de bewoner op dat moment aankan. Het doel is ontwikkeling naar meer zelfstandigheid, niet een perfect resultaat.",
+  "kaart": {
+    "titel": "MIJN SCHOONMAAKKAART",
+    "taken": [
+      {"emoji": "🧺", "taak": "Ik ruim mijn kamer op", "watDoeIk": "Kleding in de wasmand/kast • spullen op hun plek • afval weg • medicatielade in orde"},
+      {"emoji": "🍽️", "taak": "Ik ruim servies op", "watDoeIk": "Servies en bestek naar de vaatwasser"},
+      {"emoji": "🛏️", "taak": "Ik doe mijn bed", "watDoeIk": "Bed opmaken / bed verschonen volgens afspraak"},
+      {"emoji": "🧽", "taak": "Ik maak schoon", "watDoeIk": "Bureau, tafel en andere oppervlakken afnemen"},
+      {"emoji": "🚰", "taak": "Ik maak de wastafel schoon", "watDoeIk": "Wastafel netjes en schoon"},
+      {"emoji": "🚽", "taak": "Ik maak het toilet schoon", "watDoeIk": "Toilet schoonmaken"},
+      {"emoji": "🧹", "taak": "Ik stofzuig", "watDoeIk": "De vloer helemaal stofzuigen"},
+      {"emoji": "✅", "taak": "Ik controleer", "watDoeIk": "Samen kijken we of alles klaar is"}
+    ],
+    "hulp": "Vraag begeleiding om één stap samen te doen.",
+    "doel": "Steeds iets meer zelf kunnen."
+  }
+}
