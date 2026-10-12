@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img alt="Versie" src="https://img.shields.io/badge/versie-1.5.3-5B8276">
+  <img alt="Versie" src="https://img.shields.io/badge/versie-1.7.0-5B8276">
   <img alt="Android" src="https://img.shields.io/badge/Android-7.0%2B-5B8276?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-Jetpack%20Compose-DDA77A?logo=kotlin&logoColor=white">
   <img alt="AI" src="https://img.shields.io/badge/AI-Google%20Gemini-2C3E35?logo=googlegemini&logoColor=white">
@@ -59,7 +59,7 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 
 | | |
 |---|---|
-| 🗺️ **Werkplan** | Hulpvraag, sterke kanten, SMART-doelen, acties en evaluatie |
+| 🗺️ **Werkplan** | Vaste aanpak voor een taak (kamer schoonmaken, koken, boodschappen, logeren...) in één vaste UBB2-stijl: wat doet het team, wat doet de bewoner, vaste volgorde, begeleidingsniveau 0-5 en eindcontrole. Met een **aftekenkaart voor de bewoner** en een **evaluatieformulier** op aparte pagina's ([voorbeeld](docs/voorbeelden/werkplan-koken.pdf)) |
 | 📝 **Dagrapportage** | Van steekwoorden naar een objectieve rapportage |
 | 🗣️ **Gespreksverslag** | Inclusief **gesprek opnemen** en automatisch laten uitschrijven door Gemini |
 | 🚦 **Signaleringsplan** | Signalen en acties per fase (groen / oranje / rood) |
@@ -85,6 +85,7 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
 | 🔌 **Apparaten** | Foto van de wasmachine, droger, het koffieapparaat of de kookplaat: de AI leest de knoppen en programma's uit, zodat bewoners stap voor stap uitleg krijgen over precies dat apparaat (alleen de tekst wordt bewaard) |
 | 📚 **Kennisbank** | Vrije tekst met de afspraken en informatie over de afdeling |
 | 📞 **Telefoonnummers** | 06-nummer van de begeleiding en nummer van de bereikbare dienst |
+| 👤 **Voornaam** | Voornaam van de begeleider op dit toestel: het menu begroet je ermee en je kunt de AI vragen "wanneer werk ik?". Bewoners krijgen de naam nooit mee |
 | 🔑 **Toegang** | Bewonerscode (optioneel), begeleider-PIN, beheerders-PIN, AI-sleutel en model |
 
 ---
@@ -95,7 +96,7 @@ Bij elke vraag stelt de app één instructie samen voor Google Gemini:
 
 ```
 1. AI-rol            wie de AI is en hoe hij reageert           (Beheer → AI-rol)
-2. Datum en tijd     zodat "vanavond" en "donderdag" kloppen
+2. Datum en tijd     plus de komende 8 dagen, zodat "maandagochtend" altijd de eerstvolgende is
 3. Privacyregels     nooit namen van bewoners, anoniem blijven
 4. Kennisbank        afspraken en informatie over UBB2          (Beheer → Kennisbank)
 5. Documenten        geüploade regels en werkwijzen             (Beheer → Documenten)
@@ -172,6 +173,7 @@ Kies één van beide:
 app/src/main/
 ├── assets/
 │   ├── ai_rol.md              standaard AI-rol (prompt)
+│   ├── werkplan_voorbeeld.json voorbeeld-werkplan (stijl en opbouw voor de AI)
 │   └── ubb2_kennis.md         standaard kennisbank (sjabloon)
 └── java/com/example/whatsubb/
     ├── MainActivity.kt        navigatie en AppServices
@@ -180,9 +182,10 @@ app/src/main/
     ├── data/                  instellingen, kennisbank, documenten, weekinfo, apparaten, documenttypes
     ├── privacy/               Anonymizer
     ├── ui/                    Compose-schermen
-    └── util/                  PDF-export, Markdown, documentimport, foto's, weken
+    └── util/                  PDF-export (ook werkplan-opmaak), Markdown, documentimport, foto's, weken
 design/                        origineel logo
 docs/screenshots/              screenshots voor deze README
+docs/voorbeelden/              voorbeeld-PDF's
 ```
 
 ### Techniek
