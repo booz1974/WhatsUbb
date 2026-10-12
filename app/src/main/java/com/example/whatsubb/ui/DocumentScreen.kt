@@ -7,6 +7,7 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -15,6 +16,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -196,6 +198,29 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
                 Text(if (result == null) "Maak ${type.title.lowercase()}" else "Opnieuw maken", fontSize = 16.sp)
             }
 
+            // Werkplan: direct onder "Opnieuw maken" delen als PDF of als Word-document.
+            val werkplan = plan
+            if (werkplan != null && !isLoading) {
+                val title = "Werkplan ${werkplan.taak}"
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
+                ) {
+                    ShareFileButton(badge = "PDF", badgeColor = Color(0xFFD93025), label = "Delen als PDF", modifier = Modifier.weight(1f)) {
+                        runCatching {
+                            PdfExporter.share(context, pdfFileName(title), title) { WerkplanPdf.write(context, it, werkplan) }
+                        }.onFailure { Toast.makeText(context, "PDF maken mislukt", Toast.LENGTH_SHORT).show() }
+                    }
+                    ShareFileButton(badge = "W", badgeColor = Color(0xFF2B579A), label = "Delen als Word", modifier = Modifier.weight(1f)) {
+                        runCatching {
+                            PdfExporter.share(context, pdfFileName(title).removeSuffix(".pdf") + ".docx", title, WerkplanDocx.MIME_TYPE) {
+                                WerkplanDocx.write(context, it, werkplan)
+                            }
+                        }.onFailure { Toast.makeText(context, "Word-document maken mislukt", Toast.LENGTH_SHORT).show() }
+                    }
+                }
+            }
+
             PrivacyNotice(scrubCount)
 
             if (isLoading) {
@@ -227,39 +252,14 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
                             fontSize = 12.sp,
                             color = TextDark.copy(alpha = 0.6f)
                         )
-                        Button(
-                            onClick = { pdfLauncher.launch(pdfFileName(plan?.let { "Werkplan ${it.taak}" } ?: type.title)) },
-                            shape = CircleShape,
-                            colors = ButtonDefaults.buttonColors(containerColor = SagePrimary),
-                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-                        ) { Text("📄  Download als PDF") }
-                        val werkplan = plan
-                        if (werkplan != null) {
-                            // Bij een werkplan is alleen de PDF nodig: downloaden of delen.
-                            OutlinedButton(
-                                onClick = {
-                                    runCatching {
-                                        PdfExporter.share(context, pdfFileName("Werkplan ${werkplan.taak}"), "Werkplan ${werkplan.taak}") {
-                                            WerkplanPdf.write(context, it, werkplan)
-                                        }
-                                    }.onFailure { Toast.makeText(context, "PDF maken mislukt", Toast.LENGTH_SHORT).show() }
-                                },
+                        // Een werkplan deel je met de knoppen bovenaan; andere documenten hebben hier hun knoppen.
+                        if (plan == null) {
+                            Button(
+                                onClick = { pdfLauncher.launch(pdfFileName(type.title)) },
                                 shape = CircleShape,
-                                modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
-                            ) { Text("📤  Delen als PDF", color = SagePrimary) }
-                            OutlinedButton(
-                                onClick = {
-                                    val name = pdfFileName("Werkplan ${werkplan.taak}").removeSuffix(".pdf") + ".docx"
-                                    runCatching {
-                                        PdfExporter.share(context, name, "Werkplan ${werkplan.taak}", WerkplanDocx.MIME_TYPE) {
-                                            WerkplanDocx.write(context, it, werkplan)
-                                        }
-                                    }.onFailure { Toast.makeText(context, "Word-document maken mislukt", Toast.LENGTH_SHORT).show() }
-                                },
-                                shape = CircleShape,
-                                modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
-                            ) { Text("📝  Delen als Word-document", color = SagePrimary) }
-                        } else {
+                                colors = ButtonDefaults.buttonColors(containerColor = SagePrimary),
+                                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                            ) { Text("📄  Download als PDF") }
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 4.dp)) {
                                 OutlinedButton(onClick = { copyToClipboard(context, text) }, shape = CircleShape) { Text("Kopiëren") }
                                 OutlinedButton(onClick = { shareText(context, type.title, text) }, shape = CircleShape) { Text("Delen") }
@@ -281,6 +281,26 @@ fun DocumentScreen(services: AppServices, type: DocumentType, onBack: () -> Unit
                 ) { Text("Aanpassen", color = SagePrimary) }
             }
         }
+    }
+}
+
+/** Knop met een gekleurd bestandsicoontje (zoals PDF of W), om een werkplan te delen. */
+@Composable
+private fun ShareFileButton(badge: String, badgeColor: Color, label: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    OutlinedButton(
+        onClick = onClick,
+        shape = CircleShape,
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
+        modifier = modifier
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.size(width = 30.dp, height = 22.dp).background(badgeColor, RoundedCornerShape(4.dp))
+        ) {
+            Text(badge, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+        }
+        Spacer(Modifier.width(8.dp))
+        Text(label, color = SagePrimary, fontSize = 14.sp)
     }
 }
 
