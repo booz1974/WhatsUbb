@@ -243,7 +243,7 @@ fun ChatScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = if (isBewoner) "Hallo! 👋" else "Afspraken UBB2",
+                text = if (isBewoner) "Hey Whats Ubb ?!" else "Afspraken UBB2",
                 fontSize = if (messages.isEmpty()) 32.sp else 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextDark,
