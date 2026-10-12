@@ -230,10 +230,6 @@ fun ChatScreen(
             .imePadding()
             .padding(16.dp)
     ) {
-        TextButton(onClick = onAction, modifier = Modifier.align(Alignment.TopEnd)) {
-            Text(text = actionLabel, fontSize = 14.sp, color = PeachAccent, fontWeight = FontWeight.SemiBold)
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -374,6 +370,23 @@ fun ChatScreen(
                     }
                     if (isLoading) item { TypingBubble() }
                 }
+            }
+        }
+
+        // Na de inhoud, zodat de knop bovenop ligt en tikken aankomen.
+        if (isBewoner) {
+            // Bewoners zien een aan/uit-knop in plaats van het woord "Uitloggen".
+            IconButton(onClick = onAction, modifier = Modifier.align(Alignment.TopEnd)) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_power),
+                    contentDescription = actionLabel,
+                    tint = PeachAccent,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+        } else {
+            TextButton(onClick = onAction, modifier = Modifier.align(Alignment.TopEnd)) {
+                Text(text = actionLabel, fontSize = 14.sp, color = PeachAccent, fontWeight = FontWeight.SemiBold)
             }
         }
     }
