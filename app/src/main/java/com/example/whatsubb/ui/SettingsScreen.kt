@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,7 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
     var showAdminPinDialog by remember { mutableStateOf(false) }
     var phone by remember { mutableStateOf(settings.begeleidingPhone) }
     var nightPhone by remember { mutableStateOf(settings.bereikbareDienstPhone) }
+    var begeleiderName by remember { mutableStateOf(settings.begeleiderName) }
     var persona by remember { mutableStateOf(services.knowledgeBase.loadPersona()) }
 
     fun toast(text: String) = Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
@@ -85,6 +87,31 @@ fun SettingsScreen(services: AppServices, onBack: () -> Unit) {
                         toast("Standaardtekst teruggezet")
                     }, shape = CircleShape) { Text("Standaard herstellen") }
                 }
+            }
+
+            Section("👤 Jouw voornaam (begeleider)") {
+                Text(
+                    "Alleen je voornaam. De app begroet je ermee en de AI weet wie er vraagt, " +
+                        "zodat je kunt vragen \"wanneer werk ik?\". Bewoners zien je naam niet.",
+                    fontSize = 13.sp, color = TextDark.copy(alpha = 0.75f)
+                )
+                OutlinedTextField(
+                    value = begeleiderName,
+                    onValueChange = { begeleiderName = it.filter { c -> c.isLetter() || c == '-' }.take(30) },
+                    label = { Text("Voornaam") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Button(
+                    onClick = {
+                        settings.begeleiderName = begeleiderName
+                        begeleiderName = settings.begeleiderName
+                        toast(if (begeleiderName.isBlank()) "Naam verwijderd" else "Naam opgeslagen")
+                    },
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = SagePrimary)
+                ) { Text("Opslaan") }
             }
 
             Section("📞 Bel- en chatknop voor bewoners") {

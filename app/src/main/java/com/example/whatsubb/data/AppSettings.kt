@@ -6,7 +6,7 @@ import java.security.MessageDigest
 
 /**
  * Lokale instellingen van de app. Er worden hier GEEN persoonsgegevens opgeslagen,
- * alleen technische instellingen en (gehashte) toegangscodes.
+ * alleen technische instellingen, (gehashte) toegangscodes en eventueel de voornaam van de begeleider.
  */
 data class CallTarget(val name: String, val phone: String, val confirmFirst: Boolean) {
     val label get() = "Bel $name"
@@ -35,6 +35,11 @@ class AppSettings(context: Context) {
     var bereikbareDienstPhone: String
         get() = prefs.getString(KEY_NIGHT_PHONE, null).orEmpty()
         set(value) = prefs.edit().putString(KEY_NIGHT_PHONE, value.trim()).apply()
+
+    /** Voornaam van de begeleider op deze telefoon (alleen voornaam; leeg = niet ingesteld). Gaat nooit mee bij bewoners. */
+    var begeleiderName: String
+        get() = prefs.getString(KEY_BEGELEIDER_NAME, null).orEmpty()
+        set(value) = prefs.edit().putString(KEY_BEGELEIDER_NAME, firstName(value)).apply()
 
     /** Welk nummer de bel-knop nu belt: overdag de begeleiding, 's nachts de bereikbare dienst. */
     fun currentCallTarget(now: java.util.Calendar = java.util.Calendar.getInstance()): CallTarget? {
@@ -86,7 +91,13 @@ class AppSettings(context: Context) {
             .joinToString("") { "%02x".format(it) }
 
     companion object {
+        /** Alleen het eerste woord, met hoofdletter: " jeroen van sonsbeek" -> "Jeroen". */
+        fun firstName(value: String): String =
+            value.trim().substringBefore(' ').filter { it.isLetter() || it == '-' }.take(30)
+                .replaceFirstChar { it.uppercase() }
+
         const val DEFAULT_MODEL = "gemini-flash-latest"
+        private const val KEY_BEGELEIDER_NAME = "begeleider_name"
         private const val KEY_API = "api_key"
         private const val KEY_MODEL = "model"
         private const val KEY_PIN_HASH = "begeleider_pin_hash"

@@ -39,4 +39,22 @@ object Weeks {
 
     fun today(now: Long = System.currentTimeMillis()): String =
         SimpleDateFormat("EEEE d MMMM yyyy, 'het is nu' HH:mm 'uur'", dutch).format(Date(now))
+
+    /**
+     * Vandaag en de 7 dagen erna, met de week waarin ze vallen, zodat de AI "maandag" niet zelf hoeft te rekenen.
+     * Bijv. "- maandag 12 oktober (vandaag, deze week)".
+     */
+    fun upcomingDays(now: Long = System.currentTimeMillis()): String {
+        val thisWeekEnd = end(start(0, now))
+        val c = Calendar.getInstance().apply { timeInMillis = now }
+        return (0..7).joinToString("\n") { i ->
+            val label = SimpleDateFormat("EEEE d MMMM", dutch).format(c.time)
+            val tags = listOfNotNull(
+                when (i) { 0 -> "vandaag"; 1 -> "morgen"; else -> null },
+                if (c.timeInMillis < thisWeekEnd) "deze week" else "volgende week"
+            )
+            c.add(Calendar.DAY_OF_MONTH, 1)
+            "- $label (${tags.joinToString(", ")})"
+        }
+    }
 }

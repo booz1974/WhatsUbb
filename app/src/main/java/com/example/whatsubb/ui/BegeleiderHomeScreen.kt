@@ -23,6 +23,7 @@ import com.example.whatsubb.ui.theme.*
 @Composable
 fun BegeleiderHomeScreen(
     apiKeyMissing: Boolean,
+    begeleiderName: String,
     weekReminder: WeekReminder?,
     onOpenChat: () -> Unit,
     onOpenDocument: (DocumentType) -> Unit,
@@ -37,7 +38,7 @@ fun BegeleiderHomeScreen(
             .navigationBarsPadding()
             .padding(16.dp)
     ) {
-        ScreenHeader(title = "Begeleider", actionLabel = "Uitloggen", onAction = onLogout)
+        ScreenHeader(title = if (begeleiderName.isBlank()) "Begeleider" else "Hoi $begeleiderName", actionLabel = "Uitloggen", onAction = onLogout)
         Text(
             text = "Wat wil je maken? Alles blijft anoniem: gebruik geen namen.",
             fontSize = 14.sp,

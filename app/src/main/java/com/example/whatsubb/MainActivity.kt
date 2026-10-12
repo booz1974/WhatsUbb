@@ -30,7 +30,8 @@ class AppServices(context: Context) {
     val settings = AppSettings(context)
     val knowledgeBase = KnowledgeBase(
         context, KnowledgeDocuments(context), WeekInfoStore(context), DeviceStore(context),
-        contactName = { settings.currentCallTarget()?.name }
+        contactName = { settings.currentCallTarget()?.name },
+        begeleiderName = { settings.begeleiderName }
     )
 
     init {
@@ -134,6 +135,7 @@ fun MainScreen(services: AppServices) {
         )
         Screen.BegeleiderHome -> BegeleiderHomeScreen(
             apiKeyMissing = services.settings.apiKey.isBlank(),
+            begeleiderName = services.settings.begeleiderName,
             weekReminder = services.knowledgeBase.weekInfo.reminder(),
             onOpenChat = { screen = Screen.BegeleiderChat },
             onOpenDocument = { screen = Screen.Document(it) },
