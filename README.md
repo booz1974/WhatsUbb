@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img alt="Versie" src="https://img.shields.io/badge/versie-1.8.1-5B8276">
+  <img alt="Versie" src="https://img.shields.io/badge/versie-1.9.0-5B8276">
   <img alt="Android" src="https://img.shields.io/badge/Android-7.0%2B-5B8276?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-Jetpack%20Compose-DDA77A?logo=kotlin&logoColor=white">
   <img alt="AI" src="https://img.shields.io/badge/AI-Google%20Gemini-2C3E35?logo=googlegemini&logoColor=white">
@@ -51,13 +51,15 @@ Alles is gebouwd rond **anonimiteit**: er worden geen namen of persoonsgegevens 
   <tr>
     <td align="center"><img src="docs/screenshots/inloggen.png" alt="Inlogscherm" width="200"><br><sub>Inloggen</sub></td>
     <td align="center"><img src="docs/screenshots/bewoner-welkom.png" alt="Welkomstscherm bewoner (Hey Whats Ubb ?!), met bel- en chatknop en voorbeeldvragen" width="200"><br><sub>Welkom, bel- en chatknop</sub></td>
-    <td align="center"><img src="docs/screenshots/bewoner-chat.png" alt="Chat met de AI: wie werkt er vandaag?" width="200"><br><sub>Antwoord van de AI</sub></td>
+    <td align="center"><img src="docs/screenshots/bewoner-chat.png" alt="Gesprek met de AI: de AI vraagt door, het invoerveld staat onderaan" width="200"><br><sub>Doorpraten met de AI</sub></td>
   </tr>
 </table>
 
 | Functie | Wat doet het? |
 |---|---|
 | 💬 **Vraag alles** | Chat in eenvoudige taal (B1) over regels, afspraken, het weekmenu, het rooster, apparaten op de afdeling, praktische dingen en gevoelens |
+| 🔁 **Doorpraten** | Een gesprek zoals bij online AI-chats: het invoerveld staat onderaan, na elk antwoord staat de cursor weer klaar en je verstuurt met Enter. De AI onthoudt wat er eerder in het gesprek gezegd is. Met **🔄 Nieuw gesprek** begin je opnieuw |
+| 💛 **Echt luisteren** | Bij gevoelens vraagt de AI eerst rustig door (*"Wat is er gebeurd?"*) voordat hij met tips of stappen komt. Hij noemt de begeleiding bij het eerste antwoord, als jullie stappen bedenken en af en toe in een lang gesprek, niet in elk antwoord |
 | 🎙️ **Spraak** | Microfoonknop in het invoerveld: inspreken in plaats van typen |
 | 👆 **Voorbeeldvragen** | Aanklikbare vragen zoals *"Wat eten we vanavond?"* en *"Ik voel me niet zo goed"* |
 | 📞 **Bel- en chatknop** | Eén tik om de begeleiding te bellen of via WhatsApp te chatten; tussen 23:00 en 08:00 de bereikbare dienst (met controlevraag) |

@@ -26,8 +26,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -68,8 +70,8 @@ fun ChatScreen(
     val listState = rememberLazyListState()
     var pending by remember { mutableStateOf<Job?>(null) } // lopende vraag aan de AI
 
-    // Terug-toets tijdens een gesprek: gesprek wissen en terug naar het welkomstscherm met de voorbeeldvragen.
-    BackHandler(enabled = messages.isNotEmpty() || isLoading) {
+    // Gesprek wissen en terug naar het welkomstscherm met de voorbeeldvragen.
+    fun clearConversation() {
         pending?.cancel()
         messages.clear()
         history.clear()
@@ -77,9 +79,21 @@ fun ChatScreen(
         lastScrubCount = 0
     }
 
+    BackHandler(enabled = messages.isNotEmpty() || isLoading) { clearConversation() }
+
     LaunchedEffect(messages.size, isLoading) {
         val count = messages.size + if (isLoading) 1 else 0
         if (count > 0) listState.animateScrollToItem(count - 1)
+    }
+
+    // Tijdens een gesprek staat de cursor steeds klaar in het invoerveld onderaan, ook na een antwoord.
+    val inputFocus = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
+    LaunchedEffect(messages.isNotEmpty() || isLoading, isLoading) {
+        if (messages.isNotEmpty() || isLoading) {
+            runCatching { inputFocus.requestFocus() }
+            keyboard?.show()
+        }
     }
 
     val speechLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -278,6 +292,63 @@ fun ChatScreen(
                 Spacer(modifier = Modifier.height(if (messages.isEmpty()) 20.dp else 12.dp))
             }
 
+            val inConversation = messages.isNotEmpty() || isLoading
+            if (inConversation) {
+                // Gesprek zoals bij online AI-chats: berichten scrollen, het invoerveld blijft onderaan staan.
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp)
+                ) {
+                    items(messages) { msg ->
+                        Column {
+                            ChatBubble(message = msg)
+                            if (!msg.isUser && !msg.isError) {
+                                AnswerPdfActions(onSave = { savePdf(msg) }, onShare = { sharePdf(msg) })
+                            }
+                            if (msg.show113) Help113Card(onCall = { startCall(HELP_113_PHONE) }, onChat = ::open113Chat)
+                        }
+                    }
+                    if (isLoading) item { TypingBubble() }
+                }
+
+                PrivacyNotice(lastScrubCount)
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                        .shadow(
+                            elevation = 12.dp,
+                            shape = RoundedCornerShape(24.dp),
+                            spotColor = Color.Black.copy(alpha = 0.15f)
+                        ),
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp)) {
+                        ChatInputPill(
+                            value = questionText,
+                            onValueChange = { questionText = it },
+                            placeholder = "Typ verder...",
+                            enabled = !isLoading,
+                            onSend = { send() },
+                            onMic = ::startListening,
+                            focusRequester = inputFocus
+                        )
+                        TextButton(
+                            onClick = ::clearConversation,
+                            contentPadding = PaddingValues(horizontal = 8.dp),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Text("🔄 Nieuw gesprek", fontSize = 13.sp, color = SagePrimary)
+                        }
+                    }
+                }
+                return@Column
+            }
+
             // Zwevende witte kaart met de vraag en het invoerveld
             Card(
                 modifier = Modifier
@@ -362,27 +433,6 @@ fun ChatScreen(
             }
 
             PrivacyNotice(lastScrubCount)
-
-            if (messages.isNotEmpty() || isLoading) {
-                Spacer(modifier = Modifier.height(12.dp))
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxWidth().weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp)
-                ) {
-                    items(messages) { msg ->
-                        Column {
-                            ChatBubble(message = msg)
-                            if (!msg.isUser && !msg.isError) {
-                                AnswerPdfActions(onSave = { savePdf(msg) }, onShare = { sharePdf(msg) })
-                            }
-                            if (msg.show113) Help113Card(onCall = { startCall(HELP_113_PHONE) }, onChat = ::open113Chat)
-                        }
-                    }
-                    if (isLoading) item { TypingBubble() }
-                }
-            }
         }
 
         // Na de inhoud, zodat de knop bovenop ligt en tikken aankomen.

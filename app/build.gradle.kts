@@ -22,10 +22,10 @@ android {
         applicationId = "com.example.whatsubb"
         minSdk = 24
         targetSdk = 37
-        versionCode = 19
-        versionName = "1.8.1"
+        versionCode = 20
+        versionName = "1.9.0"
         // Datum van deze versie (wordt onderaan in Beheer getoond); bij een nieuwe versie bijwerken.
-        buildConfigField("String", "RELEASE_DATE", "\"12 oktober 2026\"")
+        buildConfigField("String", "RELEASE_DATE", "\"14 oktober 2026\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

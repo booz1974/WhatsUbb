@@ -7,11 +7,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -55,7 +67,11 @@ fun ScreenHeader(title: String, actionLabel: String, onAction: () -> Unit, modif
     }
 }
 
-/** Grijze invoer-pil met een groene ronde knop: microfoon als het veld leeg is, anders verzenden. */
+/**
+ * Grijze invoer-pil met een groene ronde knop: microfoon als het veld leeg is, anders verzenden.
+ * Enter verstuurt ook. Het veld blijft typbaar als [enabled] false is (bijv. tijdens wachten op een antwoord),
+ * zodat de cursor en het toetsenbord blijven staan; alleen versturen kan dan niet.
+ */
 @Composable
 fun ChatInputPill(
     value: String,
@@ -63,8 +79,13 @@ fun ChatInputPill(
     placeholder: String,
     enabled: Boolean,
     onSend: () -> Unit,
-    onMic: () -> Unit
+    onMic: () -> Unit,
+    focusRequester: FocusRequester? = null
 ) {
+    fun trySend() {
+        if (enabled && value.isNotBlank()) onSend()
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -81,9 +102,22 @@ fun ChatInputPill(
                 value = value,
                 onValueChange = onValueChange,
                 textStyle = TextStyle(fontSize = 16.sp, color = TextDark),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
+                    // Enter op een fysiek toetsenbord verstuurt; Shift+Enter geeft een nieuwe regel.
+                    .onPreviewKeyEvent { event ->
+                        if (event.key == Key.Enter && !event.isShiftPressed) {
+                            if (event.type == KeyEventType.KeyDown) trySend()
+                            true
+                        } else false
+                    },
                 maxLines = 5,
-                enabled = enabled
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    imeAction = ImeAction.Send
+                ),
+                keyboardActions = KeyboardActions(onSend = { trySend() })
             )
         }
         Spacer(modifier = Modifier.width(8.dp))
